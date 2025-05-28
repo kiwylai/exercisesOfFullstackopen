@@ -1,11 +1,13 @@
 import { useState, useEffect } from 'react'
-import axios from "axios";
+import personService from './services/person'
 
 const handleWith = (handler)=>{ 
   return (event) => {
     console.log(event.target.value)
     handler(event.target.value)
-  }}
+  }
+}
+
 const Filter = ({ searchTerm, setSearchTerm }) => {
   return (
     <div>filter shown with <input value={searchTerm} onChange={handleWith(setSearchTerm)}/></div>
@@ -21,7 +23,9 @@ const PersonForm = ({ persons, setPersons }) => {
       alert(`${newName} is already added to phonebook`)
       return
     }
-    setPersons(persons.concat({ name: newName, number: newNumber }))
+    personService
+      .create({ name: newName, number: newNumber })
+      .then(person => setPersons(persons.concat(person)))
     setNewName('')
     setNewNumber('')
   }
@@ -48,11 +52,11 @@ const App = () => {
 
   useEffect(() => {
     console.log('effect')
-    axios
-      .get('http://localhost:3001/persons')
-      .then(response => {
+    personService
+      .getAll()
+      .then(allPersons => {
         console.log('promise fulfilled')
-        setPersons(response.data)
+        setPersons(allPersons)
       })
   }, [])
 
