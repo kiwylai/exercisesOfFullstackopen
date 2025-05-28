@@ -19,10 +19,18 @@ const PersonForm = ({ persons, setPersons }) => {
   const [newNumber, setNewNumber] = useState('')
   const handleSubmit = (event) => {
     event.preventDefault()
-    if (persons.find(person => person.name === newName)) {
-      alert(`${newName} is already added to phonebook`)
-      return
-    }
+    const existingPerson = persons.find(person => person.name === newName)
+    if (existingPerson) {
+      if (window.confirm(`${newName} is already added to phonebook, replace the old number with a new one?`)){
+      return (personService
+          .update(existingPerson.id, { name: newName, number: newNumber })
+          .then(updatedPerson => {
+            setPersons(persons.map(p => p.id !== updatedPerson.id ? p : updatedPerson))
+            setNewName('')
+            setNewNumber('')
+          }))
+    }}
+    
     personService
       .create({ name: newName, number: newNumber })
       .then(person => setPersons(persons.concat(person)))
