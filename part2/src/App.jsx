@@ -38,13 +38,25 @@ const PersonForm = ({ persons, setPersons }) => {
   )
 }
 
-const Persons = ({ persons,searchTerm }) => {
+const Persons = ({ persons,searchTerm, setPersons }) => {
   const filteredPersons = searchTerm ? persons.filter(person => person.name.toLowerCase().includes(searchTerm.toLowerCase())) : persons
+    const handleDelete = (id, name) => {
+      if (window.confirm(`Delete ${name}?`)) {
+        personService
+          .remove(id)
+          .then(() => {
+            setPersons(persons.filter(p => p.id !== id))
+          })
+          .catch(error => {
+            console.error('Error deleting person:', error)
+          })
+      }}
 
   return (
-    filteredPersons.map(person => <p key={person.name}>{person.name} {person.number}</p>)
+    filteredPersons.map(person => <p key={person.name}>{person.name} {person.number}
+    <button onClick={() => handleDelete(person.id, person.name)}>delete</button></p>)
   )
-}
+  }
 
 const App = () => {
   const [persons, setPersons] = useState([]) 
@@ -67,7 +79,7 @@ const App = () => {
       <h2>add a new</h2>
       <PersonForm persons={persons} setPersons={setPersons} />
       <h2>Numbers</h2>   
-      <Persons persons={persons} searchTerm={searchTerm} />
+      <Persons persons={persons} searchTerm={searchTerm} setPersons={setPersons} />
     </div>
   )
 }
