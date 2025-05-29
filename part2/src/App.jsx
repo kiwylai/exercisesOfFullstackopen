@@ -35,16 +35,24 @@ const PersonForm = ({ persons, setPersons }) => {
     } 
     return false
   }
+
+  const clearInputFields = () => {
+    setNewName('')
+    setNewNumber('')
+  }
   const handleSubmit = (event) => {
     event.preventDefault()
     const existingPerson = persons.find(person => person.name === newName)
+    let operationSuccessful = false
     if (existingPerson) {
-      updatePerson(existingPerson)
+      operationSuccessful = updatePerson(existingPerson)   
     } else {
       addPerson(event)
+      operationSuccessful = true
     }
-    setNewName('')
-    setNewNumber('')
+    if (operationSuccessful) {
+      clearInputFields() 
+    }
   }
   
   return (
