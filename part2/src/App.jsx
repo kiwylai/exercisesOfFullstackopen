@@ -17,26 +17,36 @@ const Filter = ({ searchTerm, setSearchTerm }) => {
 const PersonForm = ({ persons, setPersons }) => {
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
+
+  const addPerson = () => {
+    personService
+      .create({ name: newName, number: newNumber })
+      .then(person => setPersons(persons.concat(person)))
+  }
+
+  const updatePerson = (existingPerson) => {
+    if (window.confirm(`${newName} is already added to phonebook, replace the old number with a new one?`)){
+      personService
+        .update(existingPerson.id, { name: newName, number: newNumber })
+        .then(updatedPerson => {
+          setPersons(persons.map(p => p.id !== updatedPerson.id ? p : updatedPerson))
+        })
+      return true
+    } 
+    return false
+  }
   const handleSubmit = (event) => {
     event.preventDefault()
     const existingPerson = persons.find(person => person.name === newName)
     if (existingPerson) {
-      if (window.confirm(`${newName} is already added to phonebook, replace the old number with a new one?`)){
-      return (personService
-          .update(existingPerson.id, { name: newName, number: newNumber })
-          .then(updatedPerson => {
-            setPersons(persons.map(p => p.id !== updatedPerson.id ? p : updatedPerson))
-            setNewName('')
-            setNewNumber('')
-          }))
-    }}
-    
-    personService
-      .create({ name: newName, number: newNumber })
-      .then(person => setPersons(persons.concat(person)))
+      updatePerson(existingPerson)
+    } else {
+      addPerson(event)
+    }
     setNewName('')
     setNewNumber('')
   }
+  
   return (
     <form onSubmit={handleSubmit}>
       name: <input value={newName} onChange={handleWith(setNewName)} /> <br/>
