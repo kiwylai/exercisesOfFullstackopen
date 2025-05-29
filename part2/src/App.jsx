@@ -14,14 +14,19 @@ const Filter = ({ searchTerm, setSearchTerm }) => {
   )
 }
 
-const PersonForm = ({ persons, setPersons }) => {
+const PersonForm = ({ persons, setPersons, setMessage }) => {
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
 
   const addPerson = () => {
     personService
       .create({ name: newName, number: newNumber })
-      .then(person => setPersons(persons.concat(person)))
+      .then(person => {setPersons(persons.concat(person))
+        setMessage(`Added ${newName} `)
+          setTimeout(() => {
+            setMessage(null)
+          }, 5000)
+      })
   }
 
   const updatePerson = (existingPerson) => {
@@ -30,6 +35,13 @@ const PersonForm = ({ persons, setPersons }) => {
         .update(existingPerson.id, { name: newName, number: newNumber })
         .then(updatedPerson => {
           setPersons(persons.map(p => p.id !== updatedPerson.id ? p : updatedPerson))
+          setMessage(`Updated ${newNumber} `)
+          setTimeout(() => {
+            setMessage(null)
+          }, 5000)
+        })
+        .catch(error => {
+          console.error('Error updating person:', error)
         })
       return true
     } 
@@ -64,7 +76,7 @@ const PersonForm = ({ persons, setPersons }) => {
   )
 }
 
-const Persons = ({ persons,searchTerm, setPersons }) => {
+const Persons = ({ persons, searchTerm, setPersons }) => {
   const filteredPersons = searchTerm ? persons.filter(person => person.name.toLowerCase().includes(searchTerm.toLowerCase())) : persons
     const handleDelete = (id, name) => {
       if (window.confirm(`Delete ${name}?`)) {
@@ -84,9 +96,22 @@ const Persons = ({ persons,searchTerm, setPersons }) => {
   )
   }
 
+const Notification = ({message }) => { 
+  if (message === null) {
+    return ''
+  }
+
+  return (
+    <div className='success'>
+      {message} 
+    </div>
+  )
+}
+
 const App = () => {
   const [persons, setPersons] = useState([]) 
   const [searchTerm, setSearchTerm] = useState('')
+  const [message, setMessage] = useState(null)
 
   useEffect(() => {
     console.log('effect')
@@ -101,9 +126,10 @@ const App = () => {
   return (
     <div>     
       <h2>Phonebook</h2>
+      <Notification message={message} />
       <Filter searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
       <h2>add a new</h2>
-      <PersonForm persons={persons} setPersons={setPersons} />
+      <PersonForm persons={persons} setPersons={setPersons} setMessage={setMessage}/>
       <h2>Numbers</h2>   
       <Persons persons={persons} searchTerm={searchTerm} setPersons={setPersons} />
     </div>
