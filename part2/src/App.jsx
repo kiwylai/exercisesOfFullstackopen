@@ -14,19 +14,18 @@ const Filter = ({ searchTerm, setSearchTerm }) => {
   )
 }
 
-const PersonForm = ({ persons, setPersons, setMessage }) => {
+const PersonForm = ({ persons, setPersons, displayMessage }) => {
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
 
   const addPerson = () => {
     personService
       .create({ name: newName, number: newNumber })
-      .then(person => {setPersons(persons.concat(person))
-        setMessage(`Added ${newName} `)
-          setTimeout(() => {
-            setMessage(null)
-          }, 5000)
-      })
+      .then(person => {
+        setPersons(persons.concat(person))
+        displayMessage(`Added ${person.name}`)
+      }
+    )
   }
 
   const updatePerson = (existingPerson) => {
@@ -35,10 +34,7 @@ const PersonForm = ({ persons, setPersons, setMessage }) => {
         .update(existingPerson.id, { name: newName, number: newNumber })
         .then(updatedPerson => {
           setPersons(persons.map(p => p.id !== updatedPerson.id ? p : updatedPerson))
-          setMessage(`Updated ${newNumber} `)
-          setTimeout(() => {
-            setMessage(null)
-          }, 5000)
+          displayMessage(`Updated ${newName} `)
         })
         .catch(error => {
           console.error('Error updating person:', error)
@@ -76,19 +72,20 @@ const PersonForm = ({ persons, setPersons, setMessage }) => {
   )
 }
 
-const Persons = ({ persons, searchTerm, setPersons }) => {
+const Persons = ({ persons, searchTerm, setPersons, displayMessage }) => {
   const filteredPersons = searchTerm ? persons.filter(person => person.name.toLowerCase().includes(searchTerm.toLowerCase())) : persons
-    const handleDelete = (id, name) => {
-      if (window.confirm(`Delete ${name}?`)) {
-        personService
-          .remove(id)
-          .then(() => {
-            setPersons(persons.filter(p => p.id !== id))
-          })
-          .catch(error => {
-            console.error('Error deleting person:', error)
-          })
-      }}
+  const handleDelete = (id, name) => {
+    if (window.confirm(`Delete ${name}?`)) {
+      personService
+        .remove(id)
+        .then(() => {
+          setPersons(persons.filter(p => p.id !== id))
+          displayMessage(`Deleted ${name}`)
+        })
+        .catch(error => {
+          console.error('Error deleting person:', error)
+        })
+  }}
 
   return (
     filteredPersons.map(person => <p key={person.name}>{person.name} {person.number}
@@ -123,15 +120,22 @@ const App = () => {
       })
   }, [])
 
+   const displayMessage = (message) => {
+    setMessage(message)
+    setTimeout(() => {
+      setMessage(null)
+    }, 5000)
+  }
+
   return (
     <div>     
       <h2>Phonebook</h2>
       <Notification message={message} />
       <Filter searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
       <h2>add a new</h2>
-      <PersonForm persons={persons} setPersons={setPersons} setMessage={setMessage}/>
+      <PersonForm persons={persons} setPersons={setPersons} displayMessage={displayMessage}/>
       <h2>Numbers</h2>   
-      <Persons persons={persons} searchTerm={searchTerm} setPersons={setPersons} />
+      <Persons persons={persons} searchTerm={searchTerm} setPersons={setPersons} displayMessage={displayMessage} />
     </div>
   )
 }
