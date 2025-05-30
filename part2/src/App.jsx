@@ -3,7 +3,6 @@ import personService from './services/person'
 
 const handleWith = (handler)=>{ 
   return (event) => {
-    console.log(event.target.value)
     handler(event.target.value)
   }
 }
@@ -14,7 +13,7 @@ const Filter = ({ searchTerm, setSearchTerm }) => {
   )
 }
 
-const PersonForm = ({ persons, setPersons, displayMessage }) => {
+const PersonForm = ({ persons, setPersons, displayMessage, displayErrorMessage }) => {
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
 
@@ -36,11 +35,12 @@ const PersonForm = ({ persons, setPersons, displayMessage }) => {
           setPersons(persons.map(p => p.id !== updatedPerson.id ? p : updatedPerson))
           displayMessage(`Updated ${newName} `)
         })
-        .catch(error => {
-          console.error('Error updating person:', error)
+        .catch(() => {
+          displayErrorMessage(`Information of ${newName} has already been removed from server`)
+          setPersons(persons.filter(p => p.id !== existingPerson.id))
         })
       return true
-    } 
+    }    
     return false
   }
 
@@ -72,20 +72,17 @@ const PersonForm = ({ persons, setPersons, displayMessage }) => {
   )
 }
 
-const Persons = ({ persons, searchTerm, setPersons, displayMessage }) => {
+const Persons = ({ persons, searchTerm, setPersons, displayMessage, displayErrorMessage }) => {
   const filteredPersons = searchTerm ? persons.filter(person => person.name.toLowerCase().includes(searchTerm.toLowerCase())) : persons
   const handleDelete = (id, name) => {
     if (window.confirm(`Delete ${name}?`)) {
       personService
         .remove(id)
-        .then(() => {
-          setPersons(persons.filter(p => p.id !== id))
-          displayMessage(`Deleted ${name}`)
-        })
-        .catch(error => {
-          console.error('Error deleting person:', error)
-        })
-  }}
+        .then(() => displayMessage(`Deleted ${name}`))
+        .catch(() => displayErrorMessage(`Information of ${name} has already been removed from server`))
+    }
+    setPersons(persons.filter(p => p.id !== id))
+  }
 
   return (
     filteredPersons.map(person => <p key={person.name}>{person.name} {person.number}
@@ -93,13 +90,13 @@ const Persons = ({ persons, searchTerm, setPersons, displayMessage }) => {
   )
   }
 
-const Notification = ({message }) => { 
+const Notification = ({ message, severity }) => { 
   if (message === null) {
     return ''
   }
 
   return (
-    <div className='success'>
+    <div className={`message ${severity}`}>
       {message} 
     </div>
   )
@@ -109,33 +106,48 @@ const App = () => {
   const [persons, setPersons] = useState([]) 
   const [searchTerm, setSearchTerm] = useState('')
   const [message, setMessage] = useState(null)
+  const [severity, setSeverity] = useState('')
 
   useEffect(() => {
-    console.log('effect')
     personService
       .getAll()
       .then(allPersons => {
-        console.log('promise fulfilled')
         setPersons(allPersons)
       })
   }, [])
 
-   const displayMessage = (message) => {
+  const displayQualifiedMessage = (severity, message) => {
     setMessage(message)
+    setSeverity(severity)
     setTimeout(() => {
       setMessage(null)
     }, 5000)
+  }
+  const displayMessage = (message) => {
+    displayQualifiedMessage('success', message)
+  }
+  const displayErrorMessage = (message) => {
+    displayQualifiedMessage('error', message)
   }
 
   return (
     <div>     
       <h2>Phonebook</h2>
-      <Notification message={message} />
+      <Notification message={message} severity={severity} /> 
       <Filter searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
       <h2>add a new</h2>
-      <PersonForm persons={persons} setPersons={setPersons} displayMessage={displayMessage}/>
+      <PersonForm 
+        persons={persons} 
+        setPersons={setPersons} 
+        displayMessage={displayMessage} 
+        displayErrorMessage={displayErrorMessage}/>
       <h2>Numbers</h2>   
-      <Persons persons={persons} searchTerm={searchTerm} setPersons={setPersons} displayMessage={displayMessage} />
+      <Persons 
+        persons={persons} 
+        searchTerm={searchTerm} 
+        setPersons={setPersons} 
+        displayMessage={displayMessage} 
+        displayErrorMessage={displayErrorMessage}/>
     </div>
   )
 }
