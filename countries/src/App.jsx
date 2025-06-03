@@ -1,9 +1,26 @@
-import React from 'react'
 import { useState, useEffect } from 'react'
 import axios from 'axios'
 
-const ShowCountries = ({countries, searchTerm}) => {
-  const filteredCountries = countries.filter(country => country.name.official.toLowerCase().includes(searchTerm.toLowerCase()))
+const SelectedCountry = ({ selectedCountry}) => {
+  if (!selectedCountry) return null
+  const languages = Object.values(selectedCountry.languages)
+  return (
+    <div>
+      <h1>{selectedCountry.name.official}</h1>
+      <p>Capital {selectedCountry.capital[0]}</p>
+      <p>Area {selectedCountry.area}</p>
+      <h3>Languages:</h3>
+      <ul>
+        {languages.map(language => <li key={language}>{language}</li>)}
+      </ul>
+      <img src={selectedCountry.flags.png} alt='flag' />
+    </div>
+  ) 
+} 
+
+const CountrySelectionList = ({filteredCountries, setSelectedCountry}) => {
+  console.log('show countries', filteredCountries)
+  if (!filteredCountries) return null
 
   if (filteredCountries.length > 10) {
     return (
@@ -11,35 +28,19 @@ const ShowCountries = ({countries, searchTerm}) => {
     )
   } else if (filteredCountries.length > 1) {
     return (
-      filteredCountries.map(country => <p key={country.name.official}>{country.name.official}</p>)
+      filteredCountries.map(country => <p key={country.name.official}>{country.name.official}<button onClick={() => setSelectedCountry(country)}>show</button></p>)
     )
-  } else if (filteredCountries.length === 1) {
-    const selectedCountry = filteredCountries[0]
-    const languages = Object.values(selectedCountry.languages)
-    return (
-      <div>
-        <h1>{selectedCountry.name.official}</h1>
-        <p>Capital {selectedCountry.capital[0]}</p>
-        <p>Area {selectedCountry.area}</p>
-        <h3>Languages:</h3>
-        <ul>
-          {languages.map(language => <li key={language}>{language}</li>)}
-        </ul>
-        <img src={selectedCountry.flags.png} alt='flag'/>
-      </div>
-    )
-  } else {
-    return (
-      <p>No matches</p>
-    )
-  }
+  } else return null
 }
+
 function App() {
   const [countries, setCountries] = useState([])
   const [searchTerm, setSearchTerm] = useState('')
+  const [selectedCountry, setSelectedCountry] = useState(null)
+  const [countrySelectionList, setCountrySelectionList] = useState([])
 
   const fetchCountries = () => {
-    console.log('effect')
+    console.log('fetching countries')
     axios
       .get('https://studies.cs.helsinki.fi/restcountries/api/all')
       .then(response => {
@@ -47,9 +48,28 @@ function App() {
         setCountries(response.data)
       })
   }
+  const calcultateSelectedCountryList = () => {
+    if (!countries ) return 
+    
+    const countryList = countries.filter((country) => {
+      const countryName = country.name.official.toLowerCase()
+      return countryName.includes(searchTerm.toLowerCase())
+    })
+
+    setCountrySelectionList(countryList)
+
+    if (countryList.length === 1) {
+      setSelectedCountry(countryList[0])
+    } else {
+      setSelectedCountry(null)
+    }
+  }
+
   useEffect(fetchCountries, [])
+  useEffect(calcultateSelectedCountryList, [countries, searchTerm])
 
   const handleChange = (event) => {
+    console.log('keypress', event.target.value)
     setSearchTerm(event.target.value)
   }
 
@@ -58,9 +78,9 @@ function App() {
       <form>
         find countries <input value={searchTerm} onChange={handleChange}/>
       </form>
-      <ShowCountries countries={countries} searchTerm={searchTerm}/>
+      <CountrySelectionList setSelectedCountry={setSelectedCountry} filteredCountries={countrySelectionList}/>
+      <SelectedCountry selectedCountry={selectedCountry}/>  
     </div>
   )
 }
-
 export default App
