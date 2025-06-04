@@ -8,13 +8,11 @@ const getWeatherForLocation = (lat, lon) => {
     console.log(url)
     const request = axios.get(url);
     return request.then((response) => {
-        console.log('loaded weather from server',response.data)
         return response.data
     });
 };
 
 const getLocationIcon = (weather) => {
-    console.log('calculating icon for location weather', weather)
     const iconId = weather.weather[0].icon;
     return `http://openweathermap.org/img/wn/${iconId}@2x.png`;
 };
