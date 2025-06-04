@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import axios from 'axios'
+import countriesService from './services/countries'
 
 const SelectedCountry = ({ selectedCountry}) => {
   if (!selectedCountry) return null
@@ -40,12 +40,12 @@ function App() {
   const [countrySelectionList, setCountrySelectionList] = useState([])
 
   const fetchCountries = () => {
-    console.log('fetching countries')
-    axios
-      .get('https://studies.cs.helsinki.fi/restcountries/api/all')
-      .then(response => {
+    console.log('fetching countries') 
+    countriesService
+      .getAll()
+      .then(countries => {
         console.log('countries loaded')
-        setCountries(response.data)
+        setCountries(countries)
       })
   }
   const calcultateSelectedCountryList = () => {
