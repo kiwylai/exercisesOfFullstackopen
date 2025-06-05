@@ -34,6 +34,21 @@ app.get('/api/persons', (request, response) => {
   response.json(persons)
 })
 
+app.get('/info', (request, response) => {
+  const date = new Date()
+  const formattedDate = date.toLocaleString('en-GB', {
+    weekday: 'short',
+    year: 'numeric',
+    month: 'short', 
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+    timeZoneName: 'longOffset'
+  })
+  response.send(`<p>Phonebook has info for ${persons.length} people</p><p>${formattedDate}</p>`)
+})
+
 app.get('/persons/:id', (request, response) => {
   const id = request.params.id
   const person = persons.find((person) => person.id === id)
