@@ -49,14 +49,14 @@ app.get('/info', (request, response) => {
   response.send(`<p>Phonebook has info for ${persons.length} people</p><p>${formattedDate}</p>`)
 })
 
-app.get('/persons/:id', (request, response) => {
+app.get('/api/persons/:id', (request, response) => {
   const id = request.params.id
   const person = persons.find((person) => person.id === id)
 
   if (person) {
     response.json(person)
   } else {
-    response.status(404).end()
+    response.status(404).end('Page cannot found 404')
   }
 })
 
