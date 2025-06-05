@@ -90,7 +90,7 @@ app.delete('/api/persons/:id', (request, response) => {
   const id = request.params.id
   persons = persons.filter((person) => person.id !== id)
 
-  response.status(204).end()
+  response.status(204).end('Information deleted')
 })
 
 const PORT = 3001
