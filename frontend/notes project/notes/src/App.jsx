@@ -8,7 +8,13 @@ const Notification = ({ message }) => {
     return null
   }
 
-  if ()
+  if ( message.includes('success') ) {
+    return (
+      <div className='success'>
+        {message}
+      </div>
+    )
+  }
 
   return (
     <div className='error'>
@@ -37,7 +43,7 @@ const App = () => {
       .update(id, changedNote)
       .then(returnedNote => {
         setNotes(notes.map(note => note.id === id ? returnedNote : note))
-      .catch(error => {
+      .catch(() => {
         setErrorMessage(
           `Note '${note.content}' was already removed from server`
         )
