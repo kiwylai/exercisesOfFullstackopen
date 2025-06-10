@@ -29,11 +29,12 @@ app.get('/', (request, response) => {
   response.send('<h1>Note app</h1>')
 })
 
-app.get('/api/notes', (request, response) => {
+const getAllNotes  =  (request, response) => {
   response.json(notes)
-})
+}
+app.get('/api/notes', getAllNotes)
 
-app.get('/api/notes/:id', (request, response) => {
+const getNote = (request, response) => {
   const id = request.params.id
   const note = notes.find((note) => note.id === id)
   console.log("Id is",id)
@@ -42,7 +43,8 @@ app.get('/api/notes/:id', (request, response) => {
   } else {
     response.status(404).end()
   }
-})
+}
+app.get('/api/notes/:id',getNote)
 
 app.put('/api/notes/:id', (request, response) => {
   const id = request.params.id
