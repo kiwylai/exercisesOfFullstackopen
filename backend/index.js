@@ -3,6 +3,7 @@ const morgan = require('morgan')
 const app = express()
 const cors = require('cors')
 const registerRoutesForPersonsIn = require('./phonebook_backend')
+const registerRoutesForNotesIn = require('./notesBackend')
 
 app.use(cors())
 app.use(express.json())
@@ -14,6 +15,7 @@ app.get('/', (request, response) => {
 })
 
 registerRoutesForPersonsIn(app)
+registerRoutesForNotesIn(app)
 
 const PORT = 3001
 app.listen(PORT, () => {
