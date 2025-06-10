@@ -97,4 +97,4 @@ const registerRoutesForPersonsIn = (app) => {
   app.delete('/api/persons/:id', deletePerson)
 }
 
-module.exports = { registerRoutesForPersonsIn }
+module.exports = registerRoutesForPersonsIn 
