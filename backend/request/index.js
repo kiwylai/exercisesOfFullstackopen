@@ -2,7 +2,7 @@ const express = require('express')
 const app = express()
 const cors = require('cors')
 const morgan = require('morgan')
-import registerRoutesForNotesIn from './notesBackend.js'
+const registerRoutesForNotesIn = require('./notesBackend')
 
 let notes = [
   {
