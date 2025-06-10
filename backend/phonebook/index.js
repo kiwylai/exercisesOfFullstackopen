@@ -2,7 +2,7 @@ const express = require('express')
 const morgan = require('morgan')
 const app = express()
 const cors = require('cors')
-const registerRoutesForPersonsIn = require('./phonebookBackend')
+const registerRoutesForPersonsIn = require('./phonebook_backend')
 
 app.use(cors())
 app.use(express.json())
