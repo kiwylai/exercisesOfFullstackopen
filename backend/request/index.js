@@ -4,24 +4,6 @@ const cors = require('cors')
 const morgan = require('morgan')
 const registerRoutesForNotesIn = require('./notesBackend')
 
-let notes = [
-  {
-    id: '1',
-    content: 'HTML is easy',
-    important: true,
-  },
-  {
-    id: '2',
-    content: 'Browser can execute only JavaScript',
-    important: false,
-  },
-  {
-    id: '3',
-    content: 'GET and POST are the most important methods of HTTP protocol',
-    important: true,
-  },
-]
-
 app.use(cors())
 app.use(express.json())
 app.use(morgan('tiny'))
