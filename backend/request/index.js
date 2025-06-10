@@ -3,7 +3,6 @@ const app = express()
 const cors = require('cors')
 const morgan = require('morgan')
 
-
 app.use(cors())
 
 let notes = [
