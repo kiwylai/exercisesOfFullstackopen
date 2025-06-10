@@ -30,7 +30,7 @@ app.get('/', (request, response) => {
   response.send('<h1>Note app</h1>')
 })
 
-registerRoutsForNotesIn(app)
+registerRoutesForNotesIn(app)
 
 const PORT = 3001
 app.listen(PORT, () => {
