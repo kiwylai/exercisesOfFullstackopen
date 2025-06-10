@@ -3,8 +3,6 @@ const app = express()
 const cors = require('cors')
 const morgan = require('morgan')
 
-app.use(cors())
-
 let notes = [
   {
     id: '1',
@@ -23,6 +21,7 @@ let notes = [
   },
 ]
 
+app.use(cors())
 app.use(express.json())
 app.use(morgan('tiny'))
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms'))
@@ -37,8 +36,22 @@ app.get('/api/notes', (request, response) => {
 app.get('/api/notes/:id', (request, response) => {
   const id = request.params.id
   const note = notes.find((note) => note.id === id)
-
+  console.log("Id is",id)
   if (note) {
+    response.json(note)
+  } else {
+    response.status(404).end()
+  }
+})
+
+app.put('/api/notes/:id', (request, response) => {
+  const id = request.params.id
+  const body = request.body
+  const note = notes.find((note) => note.id === id)
+  console.log("Id is",id)
+  if (note) {
+    note.content = body.content
+    note.important = body.important
     response.json(note)
   } else {
     response.status(404).end()
