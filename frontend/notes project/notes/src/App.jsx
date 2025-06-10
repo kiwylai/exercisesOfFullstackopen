@@ -43,7 +43,7 @@ const App = () => {
       .update(id, changedNote)
       .then(returnedNote => {
         setNotes(notes.map(note => note.id === id ? returnedNote : note))
-      .catch(() => {
+      }).catch(() => {
         setErrorMessage(
           `Note '${note.content}' was already removed from server`
         )
@@ -51,7 +51,6 @@ const App = () => {
           setErrorMessage(null)
         }, 5000)
         setNotes(notes.filter(n => n.id !== id))
-    })
     })
   }
   const addNote = (event) => {
