@@ -1,11 +1,9 @@
 const express = require('express')
 const morgan = require('morgan')
 const app = express()
-const cors = require('cors')
 const registerRoutesForPersonsIn = require('./phonebook_backend')
 const registerRoutesForNotesIn = require('./notesBackend')
 
-app.use(cors())
 app.use(express.json())
 app.use(express.static('dist'))
 morgan.token('type', function (req, res) { return JSON.stringify(req.body) })
