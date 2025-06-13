@@ -22,4 +22,3 @@ export default {
   update 
 }
 
-// VER56tical,.

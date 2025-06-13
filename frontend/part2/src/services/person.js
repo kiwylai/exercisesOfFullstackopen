@@ -1,5 +1,5 @@
 import axios from 'axios'
-const baseUrl = "https://exercisesoffullstackopen.onrender.com/api/persons"
+const baseUrl = "/api/persons"
 
 // 'http://localhost:3001/persons'
 
