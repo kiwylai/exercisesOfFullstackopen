@@ -230,3 +230,5 @@ tags
 [._]*.un~
 
 package-lock.json
+
+.env
