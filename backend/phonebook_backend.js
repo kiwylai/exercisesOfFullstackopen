@@ -1,11 +1,13 @@
 const Person = require("./models/person");
 const getAllPersons = (_, response) => {
+  console.log("getAllPersons");
   Person.find({}).then((persons) => {
     response.json(persons);
   });
 };
 
 const getInformation = (request, response) => {
+  console.log("getInformation");
   // TODO fix implementation
   Person.findById(request.params.id)
     .then((person) => {
@@ -17,6 +19,7 @@ const getInformation = (request, response) => {
 };
 
 const getPerson = (request, response) => {
+  console.log("getPerson");
   Person.findById(request.params.id)
     .then((person) => {
       response.json(person);
@@ -27,6 +30,7 @@ const getPerson = (request, response) => {
 };
 
 const createPerson = (request, response, next) => {
+  console.log("createPerson");
   const body = request.body;
 
   if (!body.name || !body.number) {
@@ -47,6 +51,7 @@ const createPerson = (request, response, next) => {
 };
 
 const deletePerson = (request, response, next) => {
+  console.log("deletePerson");
   const id = request.params.id;
   Person.findByIdAndDelete(id)
     .then((_) => {
