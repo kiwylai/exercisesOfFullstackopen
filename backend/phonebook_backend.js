@@ -1,6 +1,5 @@
 const Person = require("./models/person");
 const getAllPersons = (_, response) => {
-  console.log("getAllPersons");
   Person.find({}).then((persons) => {
     response.json(persons);
   });
@@ -18,34 +17,35 @@ const getInformation = (request, response) => {
     });
 };
 
-const getPerson = (request, response) => {
-  console.log("getPerson");
-  Person.findById(request.params.id)
+const getPerson = (request, response, next) => {
+  const id = request.params.id;
+  Person.findById(id)
     .then((person) => {
-      response.json(person);
+      if (person) {
+        response.json(person);
+      } else {
+        response.status(404).end();
+      }
     })
-    .catch((_) => {
-      response.status(404).end();
-    });
+    .catch((error) => next(error));
 };
 
 const createPerson = (request, response, next) => {
-  console.log("createPerson");
-  const body = request.body;
+  const { name, number } = request.body;
+  const id = request.params.id;
 
-  if (!body.name || !body.number) {
-    return response.status(400).json({ error: "name or number missing" });
-  }
+  Person.findById(id)
+    .then((person) => {
+      if (!person) {
+        return response.status(404).end();
+      }
 
-  const person = new Person({
-    name: body.name,
-    number: body.number,
-  });
+      person.name = name;
+      person.number = number;
 
-  person
-    .save()
-    .then((savedPerson) => {
-      response.json(savedPerson);
+      return person.save().then((updatedPerson) => {
+        response.json(updatedPerson);
+      });
     })
     .catch((error) => next(error));
 };

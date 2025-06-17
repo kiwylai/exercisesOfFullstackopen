@@ -18,7 +18,7 @@ const getNote = (request, response, next) => {
     .catch((error) => next(error));
 };
 
-const updateNote = (request, response) => {
+const updateNote = (request, response, next) => {
   const { content, important } = request.body;
   const id = request.params.id;
 
@@ -58,7 +58,7 @@ const createNote = (request, response) => {
 const deleteNote = (request, response) => {
   const id = request.params.id;
   Note.findByIdAndDelete(id)
-    .then((_) => {
+    .then((result) => {
       response.status(204).end();
     })
     .catch((error) => next(error));

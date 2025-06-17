@@ -1,78 +1,68 @@
-import { useState, useEffect } from 'react'
-import Note from './components/Note'
-import noteService from './services/notes'
-import Footer from './components/Footer'
+import { useState, useEffect } from "react";
+import Note from "./components/Note";
+import noteService from "./services/notes";
+import Footer from "./components/Footer";
+import Phonebook from "./components/Phonebook";
 
 const Notification = ({ message }) => {
   if (message === null) {
-    return null
+    return null;
   }
 
-  if ( message.includes('success') ) {
-    return (
-      <div className='success'>
-        {message}
-      </div>
-    )
+  if (message.includes("success")) {
+    return <div className="success">{message}</div>;
   }
 
-  return (
-    <div className='error'>
-      {message}
-    </div>
-  )
-}
+  return <div className="error">{message}</div>;
+};
 const App = () => {
-  const [notes, setNotes] = useState([])
-  const [newNote, setNewNote] = useState('')
-  const [showAll, setShowAll] = useState(true)
-  const [errorMessage, setErrorMessage] = useState(null)
+  const [notes, setNotes] = useState([]);
+  const [newNote, setNewNote] = useState("");
+  const [showAll, setShowAll] = useState(true);
+  const [errorMessage, setErrorMessage] = useState(null);
 
   useEffect(() => {
-    noteService
-      .getAll()
-      .then(initialNotes => {
-        setNotes(initialNotes)
-      })
-  }, [])
+    noteService.getAll().then((initialNotes) => {
+      setNotes(initialNotes);
+    });
+  }, []);
 
   const toggleImportanceOf = (id) => () => {
-    const note = notes.find(n => n.id === id)
-    const changedNote = { ...note, important: !note.important }
+    const note = notes.find((n) => n.id === id);
+    const changedNote = { ...note, important: !note.important };
     noteService
       .update(id, changedNote)
-      .then(returnedNote => {
-        setNotes(notes.map(note => note.id === id ? returnedNote : note))
-      }).catch(() => {
+      .then((returnedNote) => {
+        setNotes(notes.map((note) => (note.id === id ? returnedNote : note)));
+      })
+      .catch(() => {
         setErrorMessage(
           `Note '${note.content}' was already removed from server`
-        )
+        );
         setTimeout(() => {
-          setErrorMessage(null)
-        }, 5000)
-        setNotes(notes.filter(n => n.id !== id))
-    })
-  }
+          setErrorMessage(null);
+        }, 5000);
+        setNotes(notes.filter((n) => n.id !== id));
+      });
+  };
   const addNote = (event) => {
-    event.preventDefault()
+    event.preventDefault();
     const noteObject = {
       content: newNote,
       important: Math.random() > 0.5,
-    }
+    };
 
-  noteService
-    .create(noteObject)
-      .then(returnedNote => {
-        setNotes(notes.concat(returnedNote))
-      setNewNote('')
-    })
-  }
+    noteService.create(noteObject).then((returnedNote) => {
+      setNotes(notes.concat(returnedNote));
+      setNewNote("");
+    });
+  };
 
   const handleNoteChange = (event) => {
-    setNewNote(event.target.value)
-  }
+    setNewNote(event.target.value);
+  };
 
-  const notesToShow = showAll ? notes : notes.filter((note) => note.important)
+  const notesToShow = showAll ? notes : notes.filter((note) => note.important);
 
   return (
     <div>
@@ -80,12 +70,16 @@ const App = () => {
       <Notification message={errorMessage} />
       <div>
         <button onClick={() => setShowAll(!showAll)}>
-          show {showAll ? 'important' : 'all'}
+          show {showAll ? "important" : "all"}
         </button>
       </div>
       <ul>
         {notesToShow.map((note) => (
-          <Note key={note.id} note={note} toggleImportance={toggleImportanceOf(note.id)}/>
+          <Note
+            key={note.id}
+            note={note}
+            toggleImportance={toggleImportanceOf(note.id)}
+          />
         ))}
       </ul>
       <form onSubmit={addNote}>
@@ -93,8 +87,9 @@ const App = () => {
         <button type="submit">save</button>
       </form>
       <Footer />
+      <Phonebook />
     </div>
-  )
-}
+  );
+};
 
-export default App
+export default App;
