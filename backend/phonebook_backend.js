@@ -30,7 +30,7 @@ const getPerson = (request, response, next) => {
     .catch((error) => next(error));
 };
 
-const createPerson = (request, response, next) => {
+const updatePerson = (request, response, next) => {
   const { name, number } = request.body;
   const id = request.params.id;
 
@@ -50,6 +50,35 @@ const createPerson = (request, response, next) => {
     .catch((error) => next(error));
 };
 
+const createPerson = (request, response, next) => {
+  const body = request.body;
+  console.log(body);
+  if (!body || !body.name) {
+    return response.status(400).json({ error: "name missing" });
+  }
+
+  Person.findOne({ name: body.name }).then((existingperson) => {
+    if (existingperson) {
+      existingperson.number = body.number;
+      existingperson.save().then((updatedPerson) => {
+        response.json(updatedPerson);
+      });
+    } else {
+      const person = new Person({
+        name: body.name,
+        number: body.number,
+      });
+
+      person
+        .save()
+        .then((savedPerson) => {
+          response.json(savedPerson);
+        })
+        .catch((error) => next(error));
+    }
+  });
+};
+
 const deletePerson = (request, response, next) => {
   console.log("deletePerson");
   const id = request.params.id;
@@ -64,6 +93,7 @@ const registerRoutesForPersonsIn = (app) => {
   app.get("/api/persons", getAllPersons);
   app.get("/info", getInformation);
   app.get("/api/persons/:id", getPerson);
+  app.put("/api/persons/:id", updatePerson);
   app.post("/api/persons", createPerson);
   app.delete("/api/persons/:id", deletePerson);
 };

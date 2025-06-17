@@ -38,7 +38,7 @@ const updateNote = (request, response, next) => {
     .catch((error) => next(error));
 };
 
-const createNote = (request, response) => {
+const createNote = (request, response, next) => {
   const body = request.body;
   console.log(body);
   if (!body || !body.content) {
@@ -50,9 +50,12 @@ const createNote = (request, response) => {
     important: body.important || false,
   });
 
-  note.save().then((savedNote) => {
-    response.json(savedNote);
-  });
+  note
+    .save()
+    .then((savedNote) => {
+      response.json(savedNote);
+    })
+    .catch((error) => next(error));
 };
 
 const deleteNote = (request, response) => {
