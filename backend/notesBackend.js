@@ -5,29 +5,37 @@ const getAllNotes = (_, response) => {
   });
 };
 
-const getNote = (request, response) => {
-  Note.findById(request.params.id)
+const getNote = (request, response, next) => {
+  const id = request.params.id;
+  Note.findById(id)
     .then((note) => {
-      response.json(note);
+      if (note) {
+        response.json(note);
+      } else {
+        response.status(404).end();
+      }
     })
-    .catch((_) => {
-      response.status(404).end();
-    });
+    .catch((error) => next(error));
 };
 
 const updateNote = (request, response) => {
-  const notes = [];
+  const { content, important } = request.body;
   const id = request.params.id;
-  const body = request.body;
-  const note = notes.find((note) => note.id === id);
-  console.log("Id is", id);
-  if (note) {
-    note.content = body.content;
-    note.important = body.important;
-    response.json(note);
-  } else {
-    response.status(404).end();
-  }
+
+  Note.findById(id)
+    .then((note) => {
+      if (!note) {
+        return response.status(404).end();
+      }
+
+      note.content = content;
+      note.important = important;
+
+      return note.save().then((updatedNote) => {
+        response.json(updatedNote);
+      });
+    })
+    .catch((error) => next(error));
 };
 
 const createNote = (request, response) => {
@@ -56,12 +64,23 @@ const deleteNote = (request, response) => {
     .catch((error) => next(error));
 };
 
+const errorHandler = (error, request, response, next) => {
+  console.error(error.message);
+
+  if (error.name === "CastError") {
+    return response.status(400).send({ error: "malformatted id" });
+  }
+
+  next(error);
+};
+
 const registerRoutesForNotesIn = (app) => {
   app.get("/api/notes", getAllNotes);
   app.get("/api/notes/:id", getNote);
   app.put("/api/notes/:id", updateNote);
   app.post("/api/notes", createNote);
   app.delete("/api/notes/:id", deleteNote);
+  app.use(errorHandler);
 };
 
 module.exports = registerRoutesForNotesIn;
