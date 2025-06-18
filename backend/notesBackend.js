@@ -67,23 +67,12 @@ const deleteNote = (request, response) => {
     .catch((error) => next(error));
 };
 
-const errorHandler = (error, request, response, next) => {
-  console.error(error.message);
-
-  if (error.name === "CastError") {
-    return response.status(400).send({ error: "malformatted id" });
-  }
-
-  next(error);
-};
-
 const registerRoutesForNotesIn = (app) => {
   app.get("/api/notes", getAllNotes);
   app.get("/api/notes/:id", getNote);
   app.put("/api/notes/:id", updateNote);
   app.post("/api/notes", createNote);
   app.delete("/api/notes/:id", deleteNote);
-  app.use(errorHandler);
 };
 
 module.exports = registerRoutesForNotesIn;

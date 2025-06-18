@@ -31,7 +31,8 @@ const PersonForm = ({
       .then((person) => {
         setPersons(persons.concat(person));
         displayMessage(`Added ${person.name}`);
-      });
+      })
+      .catch((error) => console.log(error.response.data.error));
   };
 
   const updatePerson = (existingPerson) => {
