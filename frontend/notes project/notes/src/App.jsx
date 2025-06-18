@@ -10,10 +10,10 @@ const Notification = ({ message }) => {
   }
 
   if (message.includes("success")) {
-    return <div className="success">{message}</div>;
+    return <div className="message success">{message}</div>;
   }
 
-  return <div className="error">{message}</div>;
+  return <div className="message error">{message}</div>;
 };
 const App = () => {
   const [notes, setNotes] = useState([]);
