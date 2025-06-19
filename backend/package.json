@@ -8,7 +8,8 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "build:ui": "rm -rf dist && cd ../frontend && npm run build && cp -r dist ../backend",
     "deploy:full": "npm run build:ui && git add . && git commit -m uibuild && git push",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix"
   },
   "author": "Kiwy",
   "license": "ISC",
@@ -25,6 +26,7 @@
     "@stylistic/eslint-plugin-js": "^4.4.1",
     "cross-env": "^7.0.3",
     "eslint": "^9.29.0",
+    "eslint-config-prettier": "^10.1.5",
     "globals": "^16.2.0"
   }
 }

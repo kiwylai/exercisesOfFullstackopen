@@ -1,7 +1,8 @@
 import globals from "globals";
 import js from "@eslint/js";
 import stylisticJs from "@stylistic/eslint-plugin-js";
-
+// import someConfig from "some-other-config-you-use";
+// import eslintConfigPrettier from "eslint-config-prettier/flat";
 export default [
   js.configs.recommended,
   {
@@ -24,4 +25,7 @@ export default [
   {
     ignores: ["dist/**"],
   },
+  // {
+  //   extends: ["some-other-config-you-use", "prettier"],
+  // },
 ];

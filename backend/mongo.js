@@ -21,7 +21,7 @@ const personSchema = new mongoose.Schema({
 const Person = mongoose.model('Person', personSchema)
 
 process.argv.forEach((arg) => {
-  console.log("argument",arg)
+  console.log('argument',arg)
 })
 
 const name = process.argv[3]
