@@ -23,8 +23,10 @@ blogsRouter.post('/', (request, response, next) => {
   const body = request.body
 
   const blog = new Blog({
-    name: body.name,
-    number: body.number
+    title: body.title,
+    author: body.author,
+    url: body.url,
+    likes: body.likes
   })
 
   blog.save()
@@ -43,7 +45,7 @@ blogsRouter.delete('/:id', (request, response, next) => {
 })
 
 blogsRouter.put('/:id', (request, response, next) => {
-  const { name, number } = request.body
+  const { title, author, url, likes } = request.body
 
   Blog.findById(request.params.id)
     .then(blog => {
@@ -51,8 +53,10 @@ blogsRouter.put('/:id', (request, response, next) => {
         return response.status(404).end()
       }
 
-      blog.name = name
-      blog.number = number
+      blog.title = title
+      blog.author = author
+      blog.url = url
+      blog.likes = likes
 
       return blog.save().then((updatedblog) => {
         response.json(updatedblog)
