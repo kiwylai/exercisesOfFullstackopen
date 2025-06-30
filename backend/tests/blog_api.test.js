@@ -55,6 +55,23 @@ test('a valid blog can be added ', async () => {
   assert(titles.includes('React patterns'))
 })
 
+test('likes will be 0 when likes property is missing ', async () => {
+  const newBlog = {
+    title: 'Run away',
+    author: 'Han Pork',
+    url: 'https://runrunrun.com/'
+  }
+
+  const response =  await api
+    .post('/api/blogs')
+    .send(newBlog)
+    .expect(201)
+    .expect('Content-Type', /application\/json/)
+
+  console.log('response: ',response.body)
+  assert.strictEqual(response.body.likes, 0)
+})
+
 after(async () => {
   await mongoose.connection.close()
 })

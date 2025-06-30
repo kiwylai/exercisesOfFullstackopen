@@ -29,6 +29,10 @@ blogsRouter.post('/', (request, response, next) => {
     likes: body.likes
   })
 
+  if (!blog.likes) {
+    blog.likes = 0
+  }
+
   blog.save()
     .then(savedblog => {
       response.status(201).json(savedblog)
