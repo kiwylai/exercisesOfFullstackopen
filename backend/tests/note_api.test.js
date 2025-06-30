@@ -9,15 +9,11 @@ const api = supertest(app)
 
 beforeEach(async () => {
   await Note.deleteMany({})
-
-  let noteObject = new Note(helper.initialNotes[0])
-  await noteObject.save()
-
-  noteObject = new Note(helper.initialNotes[1])
-  await noteObject.save()
+  await Note.insertMany(helper.initialNotes)
 })
 
 test('notes are returned as json', async () => {
+  console.log('entered test')
   await api
     .get('/api/notes')
     .expect(200)
@@ -32,8 +28,9 @@ test('all notes are returned', async () => {
 
 test('a specific note is within the returned notes', async () => {
   const response = await api.get('/api/notes')
-
+  console.log('response: ',response.body)
   const contents = response.body.map(e => e.content)
+  console.log('contents: ',contents)
   assert(contents.includes('HTML is easy'))
 })
 
