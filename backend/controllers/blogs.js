@@ -31,7 +31,7 @@ blogsRouter.post('/', (request, response, next) => {
 
   blog.save()
     .then(savedblog => {
-      response.json(savedblog)
+      response.status(201).json(savedblog)
     })
     .catch(error => next(error))
 })
@@ -59,7 +59,7 @@ blogsRouter.put('/:id', (request, response, next) => {
       blog.likes = likes
 
       return blog.save().then((updatedblog) => {
-        response.json(updatedblog)
+        response.status(200).json(updatedblog)
       })
     })
     .catch(error => next(error))

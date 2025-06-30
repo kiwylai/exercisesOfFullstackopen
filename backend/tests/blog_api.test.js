@@ -13,7 +13,6 @@ beforeEach(async () => {
 })
 
 test('blogs are returned as json', async () => {
-  console.log('entered test')
   await api
     .get('/api/blogs')
     .expect(200)
@@ -33,6 +32,27 @@ test('unique identifier is id', async () => {
   assert(id !== null)
   assert(typeof id === 'string')
   assert(id.length > 0)
+})
+
+test('a valid blog can be added ', async () => {
+  const newBlog = {
+    title: 'React patterns',
+    author: 'Hanry Pork',
+    url: 'https://reactpatterns.com/',
+    likes: 7,
+  }
+
+  await api
+    .post('/api/blogs')
+    .send(newBlog)
+    .expect(201)
+    .expect('Content-Type', /application\/json/)
+
+  const blogsAtEnd = await helper.blogsInDb()
+  assert.strictEqual(blogsAtEnd.length, helper.initialBlogs.length + 1)
+
+  const titles = blogsAtEnd.map(b => b.title)
+  assert(titles.includes('React patterns'))
 })
 
 after(async () => {
