@@ -33,10 +33,15 @@ blogsRouter.post('/', (request, response, next) => {
     blog.likes = 0
   }
 
+  if (!blog.title || !blog.url) {
+    response.status(400).end()
+    return
+  }
+
   blog.save()
-    .then(savedblog => {
+    .then(savedblog =>
       response.status(201).json(savedblog)
-    })
+    )
     .catch(error => next(error))
 })
 

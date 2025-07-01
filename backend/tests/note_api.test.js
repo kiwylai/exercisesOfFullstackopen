@@ -3,7 +3,7 @@ const { test, after, beforeEach } = require('node:test')
 const mongoose = require('mongoose')
 const supertest = require('supertest')
 const app = require('../app')
-const helper = require('./test_helper')
+const helper = require('./note_test_helper')
 const Note = require('../models/note')
 const api = supertest(app)
 
