@@ -1,0 +1,18 @@
+### Notes
+### post an invalid note
+POST http://localhost:3001/api/notes
+Content-Type: application/json
+
+{
+  "inhalt": "Die kuh rennt um See rum.",
+  "important": "false"
+}
+
+### post an invalid http request
+POST http://localhost:3001/api/notes
+Content-Type: application/json
+
+{
+  "inhalt": "Die kuh rennt um See rum.",
+  "important": "false"
+}
