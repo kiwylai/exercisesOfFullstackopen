@@ -6,7 +6,7 @@ const supertest = require('supertest')
 const app = require('../app')
 const helper = require('./note_test_helper')
 const Note = require('../models/note')
-const User = require('../models/note_user')
+const User = require('../models/user')
 const api = supertest(app)
 
 describe('when there is initially some notes saved', () => {
@@ -126,7 +126,11 @@ describe('when there is initially one user at db', () => {
     const newUser = {
       username: 'mluukkai',
       name: 'Matti Luukkainen',
-      password: 'salainen'
+      password: 'chinkem'
+    //   passwordHash: $2b$10$7LgFqY8jzBcgI0VrfXcb.O3/tDvmMpCicf7OI7KnNHWy.OVU55slG
+    //               : $2b$10$X5aQwWxGyqWSgG3OSWLCSOkuT56/rRbFs90iOUzVr5TBXPamwOuOy
+    //               : $2b$10$8IC7.0IlO51WrfPJrfsk9ezAG0Fe4gfYc6zZ1F4WMrafP8sy3XIxy
+    //               : $2b$11$OGksjrGxe3HmWR9TNnNSpORnzS.xFLclb5cQ4e.93NJCeprqqw7H6
     }
 
     await api
@@ -162,6 +166,8 @@ describe('when there is initially one user at db', () => {
 
     assert.strictEqual(usersAtEnd.length, usersAtStart.length)
   })
+
+
 })
 
 after(async () => {

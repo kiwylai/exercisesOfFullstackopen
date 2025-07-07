@@ -16,3 +16,12 @@ Content-Type: application/json
   "inhalt": "Die kuh rennt um See rum.",
   "important": "false"
 }
+
+### login test
+POST http://localhost:3001/api/login
+Content-Type: application/json
+
+{
+  "username": "mluukkai",
+  "password": "salainen"
+}

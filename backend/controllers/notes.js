@@ -1,6 +1,6 @@
 const notesRouter = require('express').Router()
 const Note = require('../models/note')
-const User = require('../models/note_user')
+const User = require('../models/user')
 
 notesRouter.get('/', async (request, response) => {
   const notes = await Note
