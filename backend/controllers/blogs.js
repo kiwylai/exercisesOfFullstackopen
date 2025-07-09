@@ -1,5 +1,6 @@
 const blogsRouter = require('express').Router()
 const Blog  = require('../models/blog')
+const User = require('../models/user')
 const { tokenExtractor } = require('../utils/middleware')
 
 blogsRouter.get('/', async (request, response) => {
@@ -18,9 +19,17 @@ blogsRouter.get('/:id', async (request, response) => {
   }
 })
 
-blogsRouter.post('/',tokenExtractor ,async (request, response) => {
+blogsRouter.post('/',async (request, response) => {
   const body = request.body
-  const user = request.user
+  const token = request.token
+  if (!token) {
+    return response.status(401).json({ error: 'user has to be logged in' })
+  }
+  const user = await User.findById(token.id)
+
+  if (!user) {
+    return response.status(400).json({ error: 'userId missing or not valid' })
+  }
 
   const blog = new Blog({
     title: body.title,

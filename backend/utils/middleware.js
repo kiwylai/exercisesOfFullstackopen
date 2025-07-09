@@ -42,19 +42,12 @@ const getTokenFrom = request => {
 const tokenExtractor = async (request, response, next) => {
   let jsonWebToken = getTokenFrom(request)
   if (jsonWebToken === null || jsonWebToken === undefined) {
-    return response.status(401).json({ error: 'user has to be logged in' })
+    next()
+    return
   }
   const decodedToken = jwt.verify(jsonWebToken, process.env.SECRET)
-  if (!decodedToken.id) {
-    return response.status(401).json({ error: 'token invalid' })
-  }
-  const user = await User.findById(decodedToken.id)
+  request.token = decodedToken ? decodedToken : null
 
-  if (!user) {
-    return response.status(400).json({ error: 'userId missing or not valid' })
-  }//
-
-  request.user = user
   next()
 }
 
