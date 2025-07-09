@@ -1,4 +1,3 @@
-
 const express = require('express')
 const mongoose = require('mongoose')
 const config = require('./utils/config')
@@ -8,6 +7,7 @@ const notesRouter = require('./controllers/notes')
 const usersRouter = require('./controllers/users')
 const personsRouter = require('./controllers/persons')
 const blogsRouter = require('./controllers/blogs')
+const loginRouter = require('./controllers/login')
 
 const app = express()
 
@@ -25,7 +25,7 @@ mongoose
 app.use(express.static('dist'))
 app.use(express.json())
 app.use(middleware.requestLogger)
-
+app.use('/api/login', loginRouter)
 app.use('/api/notes', notesRouter)
 app.use('/api/persons', personsRouter)
 app.use('/api/blogs', blogsRouter)

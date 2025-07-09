@@ -64,8 +64,6 @@ describe('when there is a populated userDatabase', () => {
 }
 )
 
-
-
 after(async () => {
   await mongoose.connection.close()
 })
