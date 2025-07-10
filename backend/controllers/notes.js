@@ -20,6 +20,9 @@ notesRouter.get('/:id', async (request, response) => {
 notesRouter.post('/', async (request, response) => {
   const body = request.body
   const user = request.user
+  if (!user) {
+    return response.status(400).json({ error: 'userId missing or not valid' })
+  }
 
   const note = new Note({
     content: body.content,

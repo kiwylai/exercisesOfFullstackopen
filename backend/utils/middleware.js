@@ -52,7 +52,8 @@ const tokenExtractor = async (request, response, next) => {
 }
 
 const userExtractor = async (request, response, next) => {
-  let token = tokenExtractor(request, response, next)
+  let token = request.token
+  console.log('token: ',token)
   if (!token) {
     return response.status(401).json({ error: 'user has to be logged in' })
   }

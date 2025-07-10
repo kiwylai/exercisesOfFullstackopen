@@ -1,5 +1,4 @@
 const assert = require('node:assert')
-const bcrypt = require('bcrypt')
 const { test, after, beforeEach, describe } = require('node:test')
 const supertest = require('supertest')
 const app = require('../app')
@@ -10,7 +9,7 @@ const api = supertest(app)
 
 describe('when there is a populated userDatabase', () => {
   beforeEach(async () => {
-    await User.deleteMany({})
+
     await helper.populateDatabase()
   })
 

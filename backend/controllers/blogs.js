@@ -1,6 +1,5 @@
 const blogsRouter = require('express').Router()
 const Blog  = require('../models/blog')
-const User = require('../models/user')
 
 blogsRouter.get('/', async (request, response) => {
   const blogs = await Blog
@@ -20,11 +19,7 @@ blogsRouter.get('/:id', async (request, response) => {
 
 blogsRouter.post('/',async (request, response) => {
   const body = request.body
-  const token = request.token
-  if (!token) {
-    return response.status(401).json({ error: 'user has to be logged in' })
-  }
-  const user = await User.findById(token.id)
+  const user = request.user
 
   if (!user) {
     return response.status(400).json({ error: 'userId missing or not valid' })
@@ -46,15 +41,16 @@ blogsRouter.post('/',async (request, response) => {
 })
 
 blogsRouter.delete('/:id', async (request, response) => {
-  const token = request.token
-  if (!token) {
-    return response.status(401).json({ error: 'user has to be logged in' })
+  const user = request.user
+  if (!user) {
+    return response.status(400).json({ error: 'userId missing or not valid' })
   }
+
   const blog = await Blog.findById(request.params.id)
   if (!blog) {
     return response.status(404).end()
   }
-  if ( blog.user.toString() === token.id ) {
+  if ( blog.user.toString() === user.id.toString() ) {
     await Blog.findByIdAndDelete(request.params.id)
     response.status(204).end()
   }

@@ -1,7 +1,10 @@
 const Blog = require('../models/blog')
 
 const initialBlogs = require('./blogsData')
-
+async function populateDatabase() {
+  await Blog.deleteMany({})
+  await Blog.insertMany(initialBlogs)
+}
 const nonExistingId = async () => {
   const blog = new Blog({ content: 'willremovethissoon' })
   await blog.save()
@@ -16,5 +19,5 @@ const blogsInDb = async () => {
 }
 
 module.exports = {
-  initialBlogs, nonExistingId, blogsInDb
+  initialBlogs, nonExistingId, blogsInDb, populateDatabase
 }

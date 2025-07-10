@@ -4,13 +4,13 @@ const mongoose = require('mongoose')
 const supertest = require('supertest')
 const app = require('../app')
 const helper = require('./blog_test_helper')
-const Blog = require('../models/blog')
+const userHelper = require('./user_test_helper')
 const api = supertest(app)
 
 describe('when there is initially some blogs saved', () => {
   beforeEach(async () => {
-    await Blog.deleteMany({})
-    await Blog.insertMany(helper.initialBlogs)
+    await userHelper.populateDatabase()
+    await helper.populateDatabase()
   })
 
   test('blogs are returned as json', async () => {
