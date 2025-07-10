@@ -51,9 +51,20 @@ const tokenExtractor = async (request, response, next) => {
   next()
 }
 
+const userExtractor = async (request, response, next) => {
+  let token = tokenExtractor(request, response, next)
+  if (!token) {
+    return response.status(401).json({ error: 'user has to be logged in' })
+  }
+  const user = await User.findById(token.id)
+  request.user = user ? user : null
+  next()
+}
+
 module.exports = {
   requestLogger,
   unknownEndpoint,
   errorHandler,
   tokenExtractor,
+  userExtractor
 }

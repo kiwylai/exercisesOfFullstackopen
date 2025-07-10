@@ -1,7 +1,6 @@
 const blogsRouter = require('express').Router()
 const Blog  = require('../models/blog')
 const User = require('../models/user')
-const { tokenExtractor } = require('../utils/middleware')
 
 blogsRouter.get('/', async (request, response) => {
   const blogs = await Blog
@@ -47,8 +46,18 @@ blogsRouter.post('/',async (request, response) => {
 })
 
 blogsRouter.delete('/:id', async (request, response) => {
-  await Blog.findByIdAndDelete(request.params.id)
-  response.status(204).end()
+  const token = request.token
+  if (!token) {
+    return response.status(401).json({ error: 'user has to be logged in' })
+  }
+  const blog = await Blog.findById(request.params.id)
+  if (!blog) {
+    return response.status(404).end()
+  }
+  if ( blog.user.toString() === token.id ) {
+    await Blog.findByIdAndDelete(request.params.id)
+    response.status(204).end()
+  }
 })
 
 blogsRouter.put('/:id', (request, response, next) => {

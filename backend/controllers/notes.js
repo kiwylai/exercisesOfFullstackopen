@@ -1,7 +1,5 @@
 const notesRouter = require('express').Router()
 const Note = require('../models/note')
-const { tokenExtractor } = require('../utils/middleware')
-const User = require('../models/user')
 
 notesRouter.get('/', async (request, response) => {
   const notes = await Note
@@ -21,15 +19,7 @@ notesRouter.get('/:id', async (request, response) => {
 
 notesRouter.post('/', async (request, response) => {
   const body = request.body
-  const token = request.token
-  if (!token) {
-    return response.status(401).json({ error: 'user has to be logged in' })
-  }
-  const user = await User.findById(token.id)
-
-  if (!user) {
-    return response.status(400).json({ error: 'userId missing or not valid' })
-  }
+  const user = request.user
 
   const note = new Note({
     content: body.content,
