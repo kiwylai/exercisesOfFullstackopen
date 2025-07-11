@@ -27,6 +27,8 @@ const errorHandler = (error, request, response, next) => {
     return response.status(401).json({
       error: 'token expired'
     })
+  } else {
+    console.log('middleware error: ',error)
   }
 
   next(error)
@@ -39,12 +41,14 @@ const getTokenFrom = request => {
   }
   return null
 }
-const tokenExtractor = async (request, response, next) => {
+const tokenExtractor = async (request, response, next) =>
+{
   let jsonWebToken = getTokenFrom(request)
   if (jsonWebToken === null || jsonWebToken === undefined) {
     next()
     return
   }
+
   const decodedToken = jwt.verify(jsonWebToken, process.env.SECRET)
   request.token = decodedToken ? decodedToken : null
 
@@ -53,7 +57,6 @@ const tokenExtractor = async (request, response, next) => {
 
 const userExtractor = async (request, response, next) => {
   let token = request.token
-  console.log('token: ',token)
   if (!token) {
     return response.status(401).json({ error: 'user has to be logged in' })
   }

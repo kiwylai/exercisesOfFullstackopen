@@ -63,6 +63,7 @@ describe('when there is initially some notes saved', () => {
 
   describe('addition of a new note', () => {
     test('succeeds with valid data', async () => {
+      const token = await userHelper.loginUser(userHelper.initialUsers[0].username, api)
       const newNote = {
         content: 'async/await simplifies making async calls',
         important: true,
@@ -71,6 +72,7 @@ describe('when there is initially some notes saved', () => {
 
       await api
         .post('/api/notes')
+        .set('Authorization', `Bearer ${token}`)
         .send(newNote)
         .expect(201)
         .expect('Content-Type', /application\/json/)
@@ -83,9 +85,10 @@ describe('when there is initially some notes saved', () => {
     })
 
     test('fails with status code 400 if data invalid', async () => {
+      const token = await userHelper.loginUser(userHelper.initialUsers[0].username, api)
       const newNote = { important: true }
 
-      await api.post('/api/notes').send(newNote).expect(400)
+      await api.post('/api/notes').set('Authorization', `Bearer ${token}`).send(newNote).expect(400)
 
       const notesAtEnd = await helper.notesInDb()
 
@@ -95,10 +98,11 @@ describe('when there is initially some notes saved', () => {
 
   describe('deletion of a note', () => {
     test('succeeds with status code 204 if id is valid', async () => {
+      const token = await userHelper.loginUser(userHelper.initialUsers[0].username, api)
       const notesAtStart = await helper.notesInDb()
       const noteToDelete = notesAtStart[0]
 
-      await api.delete(`/api/notes/${noteToDelete.id}`).expect(204)
+      await api.delete(`/api/notes/${noteToDelete.id}`) .set('Authorization', `Bearer ${token}`).expect(204)
 
       const notesAtEnd = await helper.notesInDb()
 

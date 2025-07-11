@@ -16,14 +16,13 @@ loginRouter.post('/', async (request, response) => {
       error: 'invalid username or password'
     })
   }
-  console.log('user: ',user)
-  const token = {
+  const userInformation = {
     username: user.username,
     id: user._id,
   }
-  console.log('secret: ',process.env.SECRET)
+
   const encodedToken = jwt.sign(
-    payload = token,
+    payload = userInformation,
     secretOrPrivateKey = process.env.SECRET,
     options = { expiresIn: 60*60 }
   )

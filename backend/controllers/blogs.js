@@ -1,5 +1,6 @@
 const blogsRouter = require('express').Router()
 const Blog  = require('../models/blog')
+const { userExtractor } = require('../utils/middleware')
 
 blogsRouter.get('/', async (request, response) => {
   const blogs = await Blog
@@ -17,7 +18,7 @@ blogsRouter.get('/:id', async (request, response) => {
   }
 })
 
-blogsRouter.post('/',async (request, response) => {
+blogsRouter.post('/', userExtractor, async (request, response) => {
   const body = request.body
   const user = request.user
 
@@ -35,12 +36,11 @@ blogsRouter.post('/',async (request, response) => {
 
   const savedBlog = await blog.save()
   user.blogs = user.blogs.concat(savedBlog._id)
-  console.log('userAfter: ', user)
   await user.save()
   response.status(201).json(savedBlog)
 })
 
-blogsRouter.delete('/:id', async (request, response) => {
+blogsRouter.delete('/:id', userExtractor, async (request, response) => {
   const user = request.user
   if (!user) {
     return response.status(400).json({ error: 'userId missing or not valid' })

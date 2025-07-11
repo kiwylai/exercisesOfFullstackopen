@@ -37,6 +37,7 @@ describe('when there is initially some blogs saved', () => {
 
   describe('viewing a specific blog', () => {
     test('a valid blog can be added ', async () => {
+      const token = await userHelper.loginUser(userHelper.initialUsers[0].username, api)
       const newBlog = {
         title: 'React patterns',
         author: 'Hanry Pork',
@@ -46,6 +47,7 @@ describe('when there is initially some blogs saved', () => {
 
       await api
         .post('/api/blogs')
+        .set('Authorization', `Bearer ${token}`)
         .send(newBlog)
         .expect(201)
         .expect('Content-Type', /application\/json/)
@@ -60,6 +62,7 @@ describe('when there is initially some blogs saved', () => {
 
   describe('addition of a new blog', () => {
     test('likes will be 0 when likes property is missing ', async () => {
+      const token = await userHelper.loginUser(userHelper.initialUsers[0].username, api)
       const newBlog = {
         title: 'Run away',
         author: 'Han Pork',
@@ -68,6 +71,7 @@ describe('when there is initially some blogs saved', () => {
 
       const response = await api
         .post('/api/blogs')
+        .set('Authorization', `Bearer ${token}`)
         .send(newBlog)
         .expect(201)
         .expect('Content-Type', /application\/json/)
@@ -77,6 +81,7 @@ describe('when there is initially some blogs saved', () => {
     })
 
     test('status code will be 400 when title or url is missing ', async () => {
+      const token = await userHelper.loginUser(userHelper.initialUsers[0].username, api)
       const newBlog = {
         author: 'Han Pork',
         likes: 7,
@@ -84,6 +89,7 @@ describe('when there is initially some blogs saved', () => {
 
       await api
         .post('/api/blogs')
+        .set('Authorization', `Bearer ${token}`)
         .send(newBlog)
         .expect(400)
 
@@ -94,10 +100,11 @@ describe('when there is initially some blogs saved', () => {
 
   describe('deletion of a blog', () => {
     test('succeeds with status code 204 if id is valid', async () => {
+      const token = await userHelper.loginUser(userHelper.initialUsers[0].username, api)
       const blogsAtStart = await helper.blogsInDb()
       const blogToDelete = blogsAtStart[0]
 
-      await api.delete(`/api/blogs/${blogToDelete.id}`).expect(204)
+      await api.delete(`/api/blogs/${blogToDelete.id}`).set('Authorization', `Bearer ${token}`).expect(204)
 
       const blogsAtEnd = await helper.blogsInDb()
 

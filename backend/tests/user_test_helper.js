@@ -1,5 +1,6 @@
 const User = require('../models/user')
 const bcrypt = require('bcrypt')
+
 const initialUsers = [
   {
     _id: '686f9b14ae598e47b73ddbb4',
@@ -48,8 +49,21 @@ const populateDatabase = async () => {
     await createUser(user)
   }
 }
+
+const loginUser = async (username, app) => {
+  const user = initialUsers.find(user => user.username === username)
+  const loginUser = {
+    username: username,
+    password: user.password
+  }
+  const result = await app.post('/api/login').send(loginUser)
+  const token = result.body.token
+  console.log('token: ',token)
+  return token
+}
 module.exports = {
   initialUsers,
   createUser,
   populateDatabase,
+  loginUser
 }

@@ -42,7 +42,7 @@ const nonExistingId = async () => {
 }
 
 const notesInDb = async () => {
-  const notes = await Note.find({})
+  const notes = await Note.find({}).populate('user', { username: 1, name: 1 })
   return notes.map(note => note.toJSON())
 }
 
