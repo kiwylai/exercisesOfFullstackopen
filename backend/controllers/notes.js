@@ -1,3 +1,5 @@
+// noinspection JSCheckFunctionSignatures
+
 const notesRouter = require('express').Router()
 const Note = require('../models/note')
 const { userExtractor } = require('../utils/middleware')
@@ -44,23 +46,27 @@ notesRouter.delete('/:id', userExtractor,async (request, response) => {
   response.status(204).end()
 })
 
-notesRouter.put('/:id', (request, response, next) => {
+notesRouter.put('/:id', async (request, response) => {
   const { content, important } = request.body
+  const user = request.user
 
-  Note.findById(request.params.id)
-    .then(note => {
-      if (!note) {
-        return response.status(404).end()
-      }
+  // noinspection JSCheckFunctionSignatures
+  const note = await Note
+    .findById(request.params.id)
+    .populate('user', { username: 1, name: 1 })
 
-      note.content = content
-      note.important = important
+  if (!note) {
+    return response.status(404).end()
+  }
 
-      return note.save().then((updatedNote) => {
-        response.json(updatedNote)
-      })
-    })
-    .catch(error => next(error))
+  note.content = content
+  note.important = important
+
+  // noinspection JSUnresolvedReference
+  const savedNote = await note.save()
+  user.notes = user.notes.concat(savedNote._id)
+  await user.save()
+  response.status(201).json(savedNote)
 })
 
 module.exports = notesRouter

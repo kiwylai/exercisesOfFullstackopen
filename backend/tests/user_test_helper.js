@@ -61,9 +61,20 @@ const loginUser = async (username, app) => {
   console.log('token: ',token)
   return token
 }
+
+const usersInDb = async () => {
+  const users =await User
+    .find({})
+    .populate('blogs')
+    .populate('notes')
+  console.log('users: ',users)
+  return users
+}
+
 module.exports = {
   initialUsers,
   createUser,
   populateDatabase,
-  loginUser
+  loginUser,
+  usersInDb
 }
