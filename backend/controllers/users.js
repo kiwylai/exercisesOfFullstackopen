@@ -35,16 +35,19 @@ usersRouter.post('/', async (request, response) => {
 })
 
 usersRouter.put('/:id', userExtractor, async (request, response) => {
-  const { username, name } = request.body
+  const { username, name, id } = request.body
   const loginUser = request.user
 
-  const user = new User({
-    username,
-    name
-  })
+  if ( id !== loginUser.id.toString() ) {
+    response.status(403).json({ error: 'you can change only your own username' })
+  }
+
+  const user = await User.findById(id)
+  user.username = username
+  user.name = name
 
   const savedUser = await user.save()
-  response.status(201).json(savedUser)
+  response.status(200).json(savedUser)
 })
 
 module.exports = usersRouter

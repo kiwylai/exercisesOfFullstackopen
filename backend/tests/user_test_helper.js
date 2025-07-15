@@ -58,7 +58,6 @@ const loginUser = async (username, app) => {
   }
   const result = await app.post('/api/login').send(loginUser)
   const token = result.body.token
-  console.log('token: ',token)
   return token
 }
 

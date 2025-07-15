@@ -6,7 +6,6 @@ const supertest = require('supertest')
 const app = require('../app')
 const helper = require('./user_test_helper')
 const mongoose = require('mongoose')
-const { error } = require('../utils/logger')
 const api = supertest(app)
 
 describe('when there is a populated userDatabase', () => {
@@ -85,18 +84,39 @@ describe('when there is a populated userDatabase', () => {
     })
   })
 
-  test('modification fails with proper statuscode and message if user is not logged in', async () => {
+  test('modification succeed if user is logged in', async () => {
     const usersAtStart = await helper.usersInDb()
     console.log('usersAtStart: ', usersAtStart)
-    const updatedUser = usersAtStart[0]
+    const user = usersAtStart[0].toJSON()
+    const token = await helper.loginUser(user.username, api)
+    const newUsername = 'ppppppppppppppp'
+
+    await api
+      .put(`/api/users/${user.id}`)
+      .set('Authorization', `Bearer ${token}`)
+      .send({ id: user.id , username: newUsername, name: user.name })
+      .expect(200)
+      .expect('Content-Type', /application\/json/)
+
+    const usersAtEnd = await helper.usersInDb()
+    assert.strictEqual(usersAtEnd.length, usersAtStart.length)
+    const dbUser = usersAtEnd.filter(user => user.id === user.id)[0]
+    assert.strictEqual(dbUser.username, newUsername)
+  })
+
+  // todo: create a new test when the user is authenticated but a different user
+
+  test('modification fails with proper status code and message if user is not logged in ', async () => {
+    const usersAtStart = await helper.usersInDb()
+    console.log('usersAtStart: ', usersAtStart)
+    const updatedUser = usersAtStart[0].toJSON()
 
     updatedUser.username = 'ppppppppppppppp'
     await api
       .put(`/api/users/${updatedUser.id}`)
-      .send(updatedUser.toJSON())
+      .send(updatedUser)
       .expect(401)
       .expect('Content-Type', /application\/json/)
-    // todo: check tests
     const usersAtEnd = await helper.usersInDb()
     assert.strictEqual(usersAtEnd.length, usersAtStart.length)
     const dbUser = usersAtEnd.filter(user => user.id === updatedUser.id)[0]
