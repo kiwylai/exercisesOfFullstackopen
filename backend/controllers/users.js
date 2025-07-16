@@ -40,8 +40,8 @@ usersRouter.put('/:id', userExtractor, async (request, response) => {
 
   if ( id !== loginUser.id.toString() ) {
     response.status(403).json({ error: 'you can change only your own username' })
+    return
   }
-
   const user = await User.findById(id)
   user.username = username
   user.name = name

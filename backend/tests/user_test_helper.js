@@ -66,8 +66,7 @@ const usersInDb = async () => {
     .find({})
     .populate('blogs')
     .populate('notes')
-  console.log('users: ',users)
-  return users
+  return users.map(u => u.toJSON())
 }
 
 module.exports = {

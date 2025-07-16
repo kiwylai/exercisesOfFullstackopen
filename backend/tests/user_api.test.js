@@ -64,20 +64,23 @@ describe('when there is a populated userDatabase', () => {
   })
 
   describe('modification of a user', () => {
-    test('modification fails with proper statuscode and message if username already taken', async () => {
+    test('modification fails with proper status code and message if username already taken', async () => {
       const usersAtStart = await helper.usersInDb()
       console.log('usersAtStart: ', usersAtStart)
       const updatedUser = usersAtStart[0]
+      const token = await helper.loginUser(updatedUser.username, api)
 
       updatedUser.username = usersAtStart[1].username
-      console.log('test: before', typeof updatedUser)
+      console.log('test: before', updatedUser)
       const result = await api
         .put(`/api/users/${updatedUser.id}`)
-        .send(updatedUser.toJSON())
+        .set('Authorization', `Bearer ${token}`)
+        .send(updatedUser)
         .expect(400)
         .expect('Content-Type', /application\/json/)
 
       const usersAtEnd = await helper.usersInDb()
+      console.log('error message: ', result.body.error)
       assert(result.body.error.includes('expected `username` to be unique'))
 
       assert.strictEqual(usersAtEnd.length, usersAtStart.length)
@@ -87,7 +90,7 @@ describe('when there is a populated userDatabase', () => {
   test('modification succeed if user is logged in', async () => {
     const usersAtStart = await helper.usersInDb()
     console.log('usersAtStart: ', usersAtStart)
-    const user = usersAtStart[0].toJSON()
+    const user = usersAtStart[0]
     const token = await helper.loginUser(user.username, api)
     const newUsername = 'ppppppppppppppp'
 
@@ -104,12 +107,26 @@ describe('when there is a populated userDatabase', () => {
     assert.strictEqual(dbUser.username, newUsername)
   })
 
-  // todo: create a new test when the user is authenticated but a different user
+  test('modification fails when the user is authenticated but a different user', async () => {
+    const loginUser = await helper.loginUser(helper.initialUsers[0].username, api)
+    const unloginUser = { ...helper.initialUsers[1] }
 
-  test('modification fails with proper status code and message if user is not logged in ', async () => {
+    unloginUser.username = 'pppppppppp'
+    await api
+      .put(`/api/users/${unloginUser._id}`)
+      .set('Authorization', `Bearer ${loginUser}`)
+      .send(unloginUser)
+      .expect(403)
+      .expect('Content-Type', /application\/json/)
+
+    const usersAtEnd = await helper.usersInDb()
+    const dbUser = usersAtEnd.filter(user => user.id.toString() === unloginUser._id)[0]
+    assert.strictEqual(dbUser.username, helper.initialUsers[1].username)
+  })
+
+  test('modification fails with proper status code and message if user is not logged in', async () => {
     const usersAtStart = await helper.usersInDb()
-    console.log('usersAtStart: ', usersAtStart)
-    const updatedUser = usersAtStart[0].toJSON()
+    const updatedUser = { ...usersAtStart[0] }
 
     updatedUser.username = 'ppppppppppppppp'
     await api
@@ -117,6 +134,7 @@ describe('when there is a populated userDatabase', () => {
       .send(updatedUser)
       .expect(401)
       .expect('Content-Type', /application\/json/)
+
     const usersAtEnd = await helper.usersInDb()
     assert.strictEqual(usersAtEnd.length, usersAtStart.length)
     const dbUser = usersAtEnd.filter(user => user.id === updatedUser.id)[0]
@@ -152,11 +170,11 @@ describe('when there is initially one user at db', () => {
     assert(usernames.includes(newUser.username))
   })
 
-  test('creation fails with proper statuscode and message if username already taken', async () => {
+  test('creation fails with proper status code and message if username already taken', async () => {
     const usersAtStart = await helper.usersInDb()
 
     const newUser = {
-      username: 'root',
+      username: 'gogogo',
       name: 'Superuser',
       password: 'salainen'
     }
