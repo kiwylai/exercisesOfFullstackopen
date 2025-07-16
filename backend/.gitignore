@@ -233,6 +233,8 @@ package-lock.json
 
 .env
 
+.idea
+
 
 6.16 https://fullstackopen.com/en/part3/saving_data_to_mongo_db#exercises-3-13-3-14
 6.18 https://fullstackopen.com/en/part3/validation_and_es_lint
