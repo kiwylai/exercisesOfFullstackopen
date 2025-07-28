@@ -128,12 +128,12 @@ const Persons = ({
   ));
 };
 
-const Notification = ({ message, severity }) => {
-  if (message === null) {
+const Notification = ({ errorMessage, severity }) => {
+  if (errorMessage === null) {
     return "";
   }
 
-  return <div className={`message ${severity}`}>{message}</div>;
+  return <div className={`message ${severity}`}>{errorMessage}</div>;
 };
 
 const Phonebook = () => {
@@ -165,7 +165,7 @@ const Phonebook = () => {
   return (
     <div>
       <h2>Phonebook</h2>
-      <Notification message={message} severity={severity} />
+      <Notification errorMessage={message} severity={severity} />
       <Filter searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
       <h2>add a new</h2>
       <PersonForm

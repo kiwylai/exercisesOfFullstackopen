@@ -1,54 +1,82 @@
-import {Note} from "./components/Note.jsx";
+import Note from "./Note.jsx";
 import {useState, useEffect} from "react";
-import axios from "axios";
+import noteService from "../services/notes";
 
-const Notes = () => {
+const Notes = ({emitError}) => {
     const [notes, setNotes] = useState([])
     const [newNote, setNewNote] = useState('')
     const [showAll, setShowAll] = useState(true)
 
     useEffect(() => {
-        console.log('effect')
-        axios
-            .get('http://localhost:3001/notes')
-            .then(response => {
-                console.log('promise fulfilled')
-                setNotes(response.data)
+        noteService.getAll().then((initialNotes) => {
+            setNotes(initialNotes);
+        });
+    }, []);
+
+    const toggleImportanceOf = (id) => () => {
+        const note = notes.find((n) => n.id === id);
+        const changedNote = {...note, important: !note.important};
+        noteService
+            .update(id, changedNote)
+            .then((returnedNote) => {
+                setNotes(notes.map((note) => (note.id === id ? returnedNote : note)));
             })
-    })
-    console.log('render', notes.length, 'notes')
+            .catch((error) => {
+                if (error.response.status === 401) {
+                    emitError(`Note could not be changed without being logged in. Please log in.`);
+                } else {
+                    emitError(`Note '${note.content}' could not be changed because of error: ${error.errorMessage}`);
+                }
+
+                // setNotes(notes.filter((n) => n.id !== id));
+            });
+    };
 
     const addNote = (event) => {
-        event.preventDefault()
+        event.preventDefault();
         const noteObject = {
             content: newNote,
-            important: Math.random() < 0.5,
-        }
+            important: Math.random() > 0.5,
+        };
 
-        axios
-    .post('http://localhost:3001/notes', noteObject)
-    .then(response => {
-      console.log(response)
-    })
-        setNotes(notes.concat(noteObject))
-        setNewNote('')
-    }
+        noteService.create(noteObject).then((returnedNote) => {
+            setNotes(notes.concat(returnedNote));
+            setNewNote("");
+        });
+    };
 
     const handleNoteChange = (event) => {
         setNewNote(event.target.value)
     }
-    const notesToRender = showAll? notes : notes.filter(note => note.important)
+    const notesToRender = showAll ? notes : notes.filter(note => note.important)
+
+    const noteForm = () => (
+        <form onSubmit={addNote}>
+            <input
+                value={newNote}
+                onChange={handleNoteChange}
+            />
+            <button type="submit">save</button>
+        </form>
+    )
+
     return (
         <div>
             <h1>Notes</h1>
-            <button onClick={() => setShowAll(!showAll)}>show {showAll? 'only important':'all'}</button>
+            <div>
+                {noteForm()}
+                <button onClick={() => setShowAll(!showAll)}>
+                    show {showAll ? "important" : "all"}
+                </button>
+            </div>
             <ul>
-                {notesToRender.map(note => <Note key={note.id} note={note}/>)}
+                {notesToRender.map(note =>
+                    <Note key={note.id}
+                          note={note}
+                          toggleImportance={toggleImportanceOf(note.id)}
+                    />
+                )}
             </ul>
-            <form onSubmit={addNote}>
-                <input id="newNoteInputField" defaultValue={newNote} onChange={handleNoteChange}/>
-                <button type="submit">save</button>
-            </form>
         </div>
     )
 }

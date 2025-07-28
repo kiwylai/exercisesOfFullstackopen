@@ -7,6 +7,7 @@ const noteSchema = new mongoose.Schema({
   },
   important: Boolean,
   user: {
+    required: true,
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User'
   }

@@ -41,12 +41,12 @@ notesRouter.post('/', userExtractor, async (request, response) => {
   response.status(201).json(savedNote)
 })
 
-notesRouter.delete('/:id', userExtractor,async (request, response) => {
+notesRouter.delete('/:id', userExtractor, async (request, response) => {
   await Note.findByIdAndDelete(request.params.id)
   response.status(204).end()
 })
 
-notesRouter.put('/:id', async (request, response) => {
+notesRouter.put('/:id', userExtractor, async (request, response) => {
   const { content, important } = request.body
   const user = request.user
 
