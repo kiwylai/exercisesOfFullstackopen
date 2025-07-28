@@ -11,7 +11,6 @@ const getConfig = () => {
     const config = {
         headers: { Authorization: `Bearer ${loginService.getUser().token}`},
     }
-    console.log('config is:',config)
     return config;
 }
 
