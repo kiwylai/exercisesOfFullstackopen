@@ -3,20 +3,7 @@ import Footer from "./components/Footer";
 import Phonebook from "./components/Phonebook";
 import loginService from "./services/login";
 import Notes from "./components/Notes.jsx";
-
-const Notification = ({errorMessage, successMessage}) => {
-    if (errorMessage === null && successMessage === null) {
-        return null;
-    }
-
-    if (successMessage !== null) {
-        return <div className="message success">{successMessage}</div>;
-    }
-
-    if (errorMessage !== null) {
-        return <div className="message error">{errorMessage}</div>;
-    }
-};
+import Notification from "./components/Notification.jsx";
 
 const App = () => {
     const [errorMessage, setErrorMessage] = useState(null);
