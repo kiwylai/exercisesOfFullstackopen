@@ -164,7 +164,7 @@ const Phonebook = () => {
 
   return (
     <div>
-      <h2>Phonebook</h2>
+      <h1>Phonebook</h1>
       <Notification errorMessage={message} severity={severity} />
       <Filter searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
       <h2>add a new</h2>
