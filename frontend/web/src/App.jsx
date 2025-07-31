@@ -6,7 +6,7 @@ import Notification from "./components/Notification.jsx";
 import Authentication from "./components/Authentication.jsx";
 import Blogs from "./components/Blogs.jsx";
 
-const createEmitMessage =(setMessage)=> (message) => {
+const createEmitMessage = (setMessage) => (message) => {
     setMessage(
         message
     );

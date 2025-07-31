@@ -2,7 +2,7 @@ import {useState, useEffect} from "react";
 import blogService from "../services/blogs.js";
 import Blog from "./Blog.jsx";
 
-const Blogs = () => {
+const Blogs = ({emitError, emitSuccess}) => {
     const [blogs, setBlogs] = useState([])
     const [newBlog, setNewBlog] = useState({
         title: '',
@@ -18,6 +18,7 @@ const Blogs = () => {
 
     const addBlog = (event) => {
         event.preventDefault();
+
         const blogObject = {
             title: newBlog.title,
             author: newBlog.author,
@@ -26,6 +27,7 @@ const Blogs = () => {
 
         blogService.create(blogObject).then((returnedblog) => {
             setBlogs(blogs.concat(returnedblog));
+            emitSuccess(`a new blog ${newBlog.title} by ${newBlog.author} was added`)
             setNewBlog({
                 title: '',
                 author: '',
@@ -34,7 +36,7 @@ const Blogs = () => {
         })
             .catch((error) => {
                 console.error('Error creating blog:', error);
-                alert('Failed to create blog');
+                emitError('Failed to create blog');
             });
     };
 

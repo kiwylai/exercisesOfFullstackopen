@@ -21,7 +21,7 @@ const Authentication = ({emitError, emitSuccess}) => {
             setPassword('')
         } catch (exception) {
             console.log(exception)
-            emitError('Wrong credentials')
+            emitError('Wrong username or password. Please try again.')
         }
     }
 
@@ -51,7 +51,7 @@ const Authentication = ({emitError, emitSuccess}) => {
 
     const handleLogout = () => {
         window.localStorage.removeItem('loggedNoteappUser')
-        emitSuccess('logged out')
+        emitSuccess('Logged out')
     }
 
     const loginUser = loginService.getUser()
