@@ -6,27 +6,20 @@ import Notification from "./components/Notification.jsx";
 import Authentication from "./components/Authentication.jsx";
 import Blogs from "./components/Blogs.jsx";
 
+const createEmitMessage =(setMessage)=> (message) => {
+    setMessage(
+        message
+    );
+    setTimeout(() => {
+        setMessage(null);
+    }, 5000);
+}
+
 const App = () => {
     const [errorMessage, setErrorMessage] = useState(null);
     const [successMessage, setSuccessMessage] = useState(null);
-
-    const emitError = (message) => {
-        setErrorMessage(
-            message
-        );
-        setTimeout(() => {
-            setErrorMessage(null);
-        }, 5000);
-    }
-
-    const emitSuccess = (message) => {
-        setSuccessMessage(
-            message
-        );
-        setTimeout(() => {
-            setSuccessMessage(null);
-        }, 5000);
-    }
+    const emitError = createEmitMessage(setErrorMessage);
+    const emitSuccess = createEmitMessage(setSuccessMessage);
 
     return (
         <div>
