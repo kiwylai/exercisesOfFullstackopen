@@ -1,11 +1,17 @@
 import Note from "./Note.jsx";
-import {useState, useEffect} from "react";
+import {useState, useEffect, useRef} from "react";
 import noteService from "../services/notes";
+import Togglable from "./Togglable";
+import NoteForm from "./NoteForm.jsx";
+import RenderOnCondition from "./RenderOnCondition.jsx";
+import loginService from "../services/login.js";
 
 const Notes = ({emitError}) => {
     const [notes, setNotes] = useState([])
     const [newNote, setNewNote] = useState('')
     const [showAll, setShowAll] = useState(true)
+    const noteFormRef = useRef()
+    const loggedUser = loginService.getUser()
 
     useEffect(() => {
         noteService.getAll().then((initialNotes) => {
@@ -38,6 +44,7 @@ const Notes = ({emitError}) => {
             content: newNote,
             important: Math.random() > 0.5,
         };
+        noteFormRef.current.toggleVisibility()
 
         noteService.create(noteObject).then((returnedNote) => {
             setNotes(notes.concat(returnedNote));
@@ -50,21 +57,22 @@ const Notes = ({emitError}) => {
     }
     const notesToRender = showAll ? notes : notes.filter(note => note.important)
 
-    const noteForm = () => (
-        <form onSubmit={addNote}>
-            <input
-                value={newNote}
-                onChange={handleNoteChange}
-            />
-            <button type="submit">save</button>
-        </form>
-    )
-
     return (
         <div>
             <h1>Notes</h1>
             <div>
-                {noteForm()}
+                <RenderOnCondition condition={loggedUser}>
+                    <Togglable buttonLabel="new note" ref={noteFormRef}>
+                        <NoteForm
+                            onSubmit={addNote}
+                            value={newNote}
+                            handleChange={handleNoteChange}
+                        />
+                    </Togglable>
+                </RenderOnCondition>
+            </div>
+
+            <div>
                 <button onClick={() => setShowAll(!showAll)}>
                     show {showAll ? "important" : "all"}
                 </button>

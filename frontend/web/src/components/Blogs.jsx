@@ -1,6 +1,9 @@
-import {useState, useEffect} from "react";
+import {useState, useEffect, useRef} from "react";
 import blogService from "../services/blogs.js";
 import Blog from "./Blog.jsx";
+import RenderOnCondition from "./RenderOnCondition.jsx";
+import loginService from "../services/login.js";
+import Togglable from "./Togglable.jsx";
 
 const Blogs = ({emitError, emitSuccess}) => {
     const [blogs, setBlogs] = useState([])
@@ -9,6 +12,8 @@ const Blogs = ({emitError, emitSuccess}) => {
         author: '',
         url: ''
     })
+    const blogFormRef = useRef()
+    const loggedUser = loginService.getUser()
 
     useEffect(() => {
         blogService.getAll().then((initialblogs) => {
@@ -24,6 +29,8 @@ const Blogs = ({emitError, emitSuccess}) => {
             author: newBlog.author,
             url: newBlog.url
         };
+
+        blogFormRef.current.toggleVisibility()
 
         blogService.create(blogObject).then((returnedblog) => {
             setBlogs(blogs.concat(returnedblog));
@@ -86,8 +93,12 @@ const Blogs = ({emitError, emitSuccess}) => {
         <div>
             <h1>Blogs</h1>
             <div>
-                <h2>create new</h2>
-                {blogForm()}
+                <RenderOnCondition condition={loggedUser}>
+                    <Togglable buttonLabel="new blog" ref={blogFormRef}>
+                        <h2>create new</h2>
+                        {blogForm()}
+                    </Togglable>
+                </RenderOnCondition>
             </div>
             {blogs.map(blog =>
                 <Blog key={blog.id}

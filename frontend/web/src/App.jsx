@@ -18,6 +18,7 @@ const createEmitMessage = (setMessage) => (message) => {
 const App = () => {
     const [errorMessage, setErrorMessage] = useState(null);
     const [successMessage, setSuccessMessage] = useState(null);
+
     const emitError = createEmitMessage(setErrorMessage);
     const emitSuccess = createEmitMessage(setSuccessMessage);
 

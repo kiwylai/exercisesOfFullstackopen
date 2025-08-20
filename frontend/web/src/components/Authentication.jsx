@@ -1,5 +1,7 @@
 import loginService from "../services/login.js";
 import {useState} from "react";
+import LoginForm from "./LoginForm";
+import Togglable from "./Togglable";
 
 const Authentication = ({emitError, emitSuccess}) => {
     const [username, setUsername] = useState('')
@@ -16,7 +18,7 @@ const Authentication = ({emitError, emitSuccess}) => {
             window.localStorage.setItem(
                 'loggedNoteappUser', JSON.stringify(user)
             )
-
+            emitSuccess(`Logged in as ${user.name}`)
             setUsername('')
             setPassword('')
         } catch (exception) {
@@ -25,29 +27,22 @@ const Authentication = ({emitError, emitSuccess}) => {
         }
     }
 
-    const loginForm = () => (
-        <form onSubmit={handleLogin}>
+    const loginForm = () => {
+
+        return (
             <div>
-                username
-                <input
-                    type="text"
-                    value={username}
-                    name="Username"
-                    onChange={({target}) => setUsername(target.value)}
-                />
+                <Togglable buttonLabel='login'>
+                    <LoginForm
+                        username={username}
+                        password={password}
+                        handleUsernameChange={({target}) => setUsername(target.value)}
+                        handlePasswordChange={({target}) => setPassword(target.value)}
+                        handleSubmit={handleLogin}
+                    />
+                </Togglable>
             </div>
-            <div>
-                password
-                <input
-                    type="password"
-                    value={password}
-                    name="Password"
-                    onChange={({target}) => setPassword(target.value)}
-                />
-            </div>
-            <button type="submit">login</button>
-        </form>
-    )
+        )
+    }
 
     const handleLogout = () => {
         window.localStorage.removeItem('loggedNoteappUser')
@@ -57,11 +52,11 @@ const Authentication = ({emitError, emitSuccess}) => {
     const loginUser = loginService.getUser()
 
     return (loginUser ?
-        <div>
-            <p>{loginUser.name} logged-in</p>
-            <button onClick={handleLogout}>logout</button>
-        </div>
-        : loginForm()
+            <div>
+                <p>{loginUser.name} logged-in</p>
+                <button onClick={handleLogout}>logout</button>
+            </div>
+            : loginForm()
     )
 }
 
