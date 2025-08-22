@@ -32,15 +32,17 @@ const Blogs = ({emitError, emitSuccess}) => {
 
         blogFormRef.current.toggleVisibility()
 
-        blogService.create(blogObject).then((returnedblog) => {
-            setBlogs(blogs.concat(returnedblog));
-            emitSuccess(`a new blog ${newBlog.title} by ${newBlog.author} was added`)
-            setNewBlog({
-                title: '',
-                author: '',
-                url: ''
-            });
-        })
+        blogService
+            .create(blogObject)
+            .then((returnedBlog) => {
+                setBlogs(blogs.concat(returnedBlog));
+                emitSuccess(`a new blog ${newBlog.title} by ${newBlog.author} was added`)
+                setNewBlog({
+                    title: '',
+                    author: '',
+                    url: ''
+                });
+            })
             .catch((error) => {
                 console.error('Error creating blog:', error);
                 emitError('Failed to create blog');
@@ -94,8 +96,7 @@ const Blogs = ({emitError, emitSuccess}) => {
             <h1>Blogs</h1>
             <div>
                 <RenderOnCondition condition={loggedUser}>
-                    <Togglable buttonLabel="new blog" ref={blogFormRef}>
-                        <h2>create new</h2>
+                    <Togglable showLabel="new blog" ref={blogFormRef} hideLabel="cancel" legend={ <h2>create a new blog</h2>}>
                         {blogForm()}
                     </Togglable>
                 </RenderOnCondition>

@@ -62,7 +62,7 @@ const Notes = ({emitError}) => {
             <h1>Notes</h1>
             <div>
                 <RenderOnCondition condition={loggedUser}>
-                    <Togglable buttonLabel="new note" ref={noteFormRef}>
+                    <Togglable showLabel="new note" hideLabel="cancel" ref={noteFormRef} legend={ <h2>create a new note</h2>}>
                         <NoteForm
                             onSubmit={addNote}
                             value={newNote}

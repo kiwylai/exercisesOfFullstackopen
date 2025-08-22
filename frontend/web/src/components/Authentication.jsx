@@ -31,7 +31,7 @@ const Authentication = ({emitError, emitSuccess}) => {
 
         return (
             <div>
-                <Togglable buttonLabel='login'>
+                <Togglable buttonLabel='login' option='cancel'>
                     <LoginForm
                         username={username}
                         password={password}
