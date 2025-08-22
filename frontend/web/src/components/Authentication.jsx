@@ -28,10 +28,9 @@ const Authentication = ({emitError, emitSuccess}) => {
     }
 
     const loginForm = () => {
-
         return (
             <div>
-                <Togglable buttonLabel='login' option='cancel'>
+                <Togglable showLabel='login' hideLabel='cancel' legend={ <h2>login</h2>}>
                     <LoginForm
                         username={username}
                         password={password}
