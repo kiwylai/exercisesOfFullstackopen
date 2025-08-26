@@ -107,7 +107,9 @@ const Blogs = ({emitError, emitSuccess}) => {
                     </Togglable>
                 </RenderOnCondition>
             </div>
-            {blogs.map(blog =>
+            {blogs
+                .sort((a, b) => b.likes - a.likes)
+                .map(blog =>
                 <Blog key={blog.id}
                       blog={blog}
                       onUpdate={handleBlogUpdate}
