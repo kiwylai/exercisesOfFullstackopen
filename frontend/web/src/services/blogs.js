@@ -9,14 +9,12 @@ const getAll = () => {
 
 const getConfig = () => {
   const user = loginService.getUser()
-  console.log('user is:',user)
   if (!user) {
     return
   }
   const config = {
     headers: { Authorization: `Bearer ${loginService.getUser().token}`},
   }
-  console.log('config is:',config)
   return config;
 }
 
@@ -27,12 +25,24 @@ const create = async newObject => {
 
 const update = async (id, newObject) => {
   const response =
-      await axios.put(`${ baseUrl }/${id}`, newObject, getConfig())
+      await axios.put(`${baseUrl}/${id}`, newObject, getConfig())
   return response.data
+}
+
+const like = async (blog) => {
+  const updatedBlog = {
+    id: blog.id,
+    title: blog.title,
+    author: blog.author,
+    url: blog.url,
+    likes: blog.likes + 1
+  }
+  return update(blog.id, updatedBlog)
 }
 
 export default {
   getAll,
   create,
-  update
+  update,
+  like,
 };

@@ -57,6 +57,12 @@ const Blogs = ({emitError, emitSuccess}) => {
         });
     }
 
+    const handleBlogUpdate = (updatedBlog) => {
+        setBlogs(blogs.map(blog =>
+            blog.id === updatedBlog.id ? updatedBlog : blog
+        ))
+    }
+
     const blogForm = () => (
         <form onSubmit={addBlog}>
             <div>
@@ -104,6 +110,7 @@ const Blogs = ({emitError, emitSuccess}) => {
             {blogs.map(blog =>
                 <Blog key={blog.id}
                       blog={blog}
+                      onUpdate={handleBlogUpdate}
                 />
             )}
         </div>
