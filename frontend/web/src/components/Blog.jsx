@@ -1,7 +1,7 @@
 import Togglable from "./Togglable.jsx";
 import blogService from "../services/blogs.js";
 
-const Blog = ({blog, onUpdate}) => {
+const Blog = ({blog, onUpdate, onRemove}) => {
     const blogStyle = {
         paddingTop: 10,
         paddingLeft: 2,
@@ -15,8 +15,18 @@ const Blog = ({blog, onUpdate}) => {
             const result = await blogService.like(blog)
             onUpdate(result)
         } catch (error) {
-            console.log('blog:', blog)
-            console.error('fail:', error)
+            console.error('fail to add like:', error)
+        }
+    }
+
+    const handleRemove = async () => {
+        if (window.confirm(`remove blog ${blog.title} by ${blog.author}?`)) {
+            try {
+                await blogService.remove(blog.id)
+                onRemove(blog.id)
+            } catch (error) {
+                console.error('fail to remove:', error)
+            }
         }
     }
 
@@ -28,6 +38,7 @@ const Blog = ({blog, onUpdate}) => {
                     <button onClick={handleLike}>like</button>
                 </div>
                 <div>{blog.author}</div>
+                <button onClick={handleRemove}>remove</button>
             </div>
         </Togglable>
     </div>)

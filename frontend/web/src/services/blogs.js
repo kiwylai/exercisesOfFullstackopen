@@ -40,9 +40,19 @@ const like = async (blog) => {
   return update(blog.id, updatedBlog)
 }
 
+const remove = async (id) => {
+  const config = getConfig()
+  if (!config) {
+    throw new Error('Authentication required')
+  }
+  const response = await axios.delete(`${baseUrl}/${id}`, config)
+  return response.data
+}
+
 export default {
   getAll,
   create,
   update,
   like,
+  remove,
 };

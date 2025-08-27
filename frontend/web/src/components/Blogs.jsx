@@ -57,10 +57,14 @@ const Blogs = ({emitError, emitSuccess}) => {
         });
     }
 
-    const handleBlogUpdate = (updatedBlog) => {
+    const handleUpdateBlog = (updatedBlog) => {
         setBlogs(blogs.map(blog =>
             blog.id === updatedBlog.id ? updatedBlog : blog
         ))
+    }
+
+    const handleRemoveBlog = (removedBlogId) => {
+        setBlogs(blogs.filter(blog => blog.id !== removedBlogId))
     }
 
     const blogForm = () => (
@@ -112,7 +116,8 @@ const Blogs = ({emitError, emitSuccess}) => {
                 .map(blog =>
                 <Blog key={blog.id}
                       blog={blog}
-                      onUpdate={handleBlogUpdate}
+                      onUpdate={handleUpdateBlog}
+                      onRemove={handleRemoveBlog}
                 />
             )}
         </div>

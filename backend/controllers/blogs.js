@@ -1,5 +1,5 @@
 const blogsRouter = require('express').Router()
-const Blog  = require('../models/blog')
+const Blog = require('../models/blog')
 const { userExtractor } = require('../utils/middleware')
 
 blogsRouter.get('/', async (request, response) => {
@@ -50,7 +50,7 @@ blogsRouter.delete('/:id', userExtractor, async (request, response) => {
   if (!blog) {
     return response.status(404).end()
   }
-  if ( blog.user.toString() === user.id.toString() ) {
+  if (blog.user.toString() === user.id.toString()) {
     await Blog.findByIdAndDelete(request.params.id)
     response.status(204).end()
   }
